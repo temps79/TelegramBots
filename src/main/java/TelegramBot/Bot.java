@@ -1,5 +1,6 @@
 package TelegramBot;
 
+import org.json.simple.parser.ParseException;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -12,6 +13,8 @@ import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
+import javax.swing.text.TabableView;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,6 +24,8 @@ import java.util.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static TelegramBot.MyCalendar.printTableOnDay;
 
 public  class Bot extends TelegramLongPollingBot {
 
@@ -37,44 +42,49 @@ public  class Bot extends TelegramLongPollingBot {
         Message message = update.getMessage();
         if(update.hasMessage()) {
             if (update.getMessage().hasText()) {
-                try {
-                    switch (message.getText()) {
-                        case "/start":
-                            sendMsg(message, "Это команда старт!");
-                            System.out.println(message.getText());
-                            break;
-                        case "Календарь \uD83D\uDCC5":
-                            sendMsg(message, "Это календарь,реализацию пока не подвезли.Sorry");
-                            execute(sendInlineKeyBoardMessage(update.getMessage().getChatId()));
-                            System.out.println(message.getText());
-                            break;
-                        case "Обо мне \uD83E\uDD16":
-                            SendMessage sendMessage=new SendMessage().setChatId(update.getMessage().getChatId()).setText("Обо мне \uD83E\uDD16 \nСелезнев Сергей Александрович \nРепетитор по информатике/программированию и математике \nЭтот бот позволяет узнать мое расписание занятий");
+                switch (message.getText()) {
+                    case "/start":
+                        sendMsg(message, "Это команда старт!");
+                        System.out.println(message.getText());
+                        break;
+                    case "Календарь \uD83D\uDCC5":
 
-                            InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
-                            List < List < InlineKeyboardButton >> rowsInline = new ArrayList < > ();
-                            List < InlineKeyboardButton > rowInline = new ArrayList < > ();
-                            rowInline.add(new InlineKeyboardButton().setText("Ссылка на профиль").setUrl("https://repetit.ru/repetitor.aspx?id=148297"));
-                            rowsInline.add(rowInline);
-                            markupInline.setKeyboard(rowsInline);
-                            sendMessage.setReplyMarkup(markupInline);
-                            try {
-                                execute(sendMessage); // Sending our message object to user
-                            } catch (TelegramApiException e) {
-                                e.printStackTrace();
-                            }
-                            break;
-                        case "/Password":
-                            sendMsg(message, "Введите пароль");
-                            break;
-                        default:
+                       // execute(sendInlineKeyBoardMessage(update.getMessage().getChatId()));
+                        sendMsgWeeks(message,"Выберите день");
+                        System.out.println(message.getText());
+                        break;
+                    case "Обо мне \uD83E\uDD16":
+                        SendMessage sendMessage=new SendMessage().setChatId(update.getMessage().getChatId()).setText("Обо мне \uD83E\uDD16 \nСелезнев Сергей Александрович \nРепетитор по информатике/программированию и математике \nЭтот бот позволяет узнать мое расписание занятий");
 
-                            System.out.println(message.getText());
-                            break;
-                    }
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
+                        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
+                        List < List < InlineKeyboardButton >> rowsInline = new ArrayList < > ();
+                        List < InlineKeyboardButton > rowInline = new ArrayList < > ();
+                        rowInline.add(new InlineKeyboardButton().setText("Ссылка на профиль").setUrl("https://repetit.ru/repetitor.aspx?id=148297"));
+                        rowsInline.add(rowInline);
+                        markupInline.setKeyboard(rowsInline);
+                        sendMessage.setReplyMarkup(markupInline);
+                        try {
+                            execute(sendMessage); // Sending our message object to user
+                        } catch (TelegramApiException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case "/Password":
+                        sendMsg(message, "Введите пароль:");
+                        break;
+                    case "ВС":
+                        try {
+                            sendMsg(message,printTableOnDay("Воскресенье"));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    default:
 
+                        System.out.println(message.getText());
+                        break;
                 }
 
 
@@ -136,7 +146,7 @@ public  class Bot extends TelegramLongPollingBot {
         replyKeyboardMarkup.setKeyboard(keyboard);
 
         sendMessage.setChatId(message.getChatId().toString());
-        //sendMessage.setReplyToMessageId(message.getMessageId());
+
         sendMessage.setText(text);
         try {
             sendMessage(sendMessage);
@@ -147,7 +157,7 @@ public  class Bot extends TelegramLongPollingBot {
 
 
     @SuppressWarnings("deprecation") // Означает то, что в новых версиях метод уберут или заменят
-    public static SendMessage sendInlineKeyBoardMessage(long chatId) {
+    public static SendMessage sendInlineKeyBoardMessage(long chatId)  {
 
         MyCalendar calendar=new MyCalendar();
 
@@ -159,6 +169,7 @@ public  class Bot extends TelegramLongPollingBot {
             inlineKeyboardButtonsDayOfWeeks[i]=new InlineKeyboardButton();
 
         String[] Weeks={"ПН","ВТ","СР","ЧТ","ПТ","СБ","ВС"};
+
 
         inlineKeyboardButton1.setText(""+calendar.getMonth());
 
@@ -173,12 +184,15 @@ public  class Bot extends TelegramLongPollingBot {
 
 
         keyboardButtonsRow1.add(inlineKeyboardButton1);
+
+
         for(int i=0;i<7;i++)
         {
             inlineKeyboardButtonsDayOfWeeks[i].setText(Weeks[i]);
             inlineKeyboardButtonsDayOfWeeks[i].setCallbackData(Weeks[i]);
             keyboardButtonsRow2.add(inlineKeyboardButtonsDayOfWeeks[i]);
         }
+
 
 
 
@@ -190,6 +204,50 @@ public  class Bot extends TelegramLongPollingBot {
         inlineKeyboardMarkup.setKeyboard(rowList);
 
         return new SendMessage().setChatId(chatId).setText("Календарь \uD83D\uDCC5").setReplyMarkup(inlineKeyboardMarkup);
+    }
+
+    public void sendMsgWeeks (Message message, String text) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.enableMarkdown(true);
+
+        // Создаем клавиуатуру
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        sendMessage.setReplyMarkup(replyKeyboardMarkup);
+        replyKeyboardMarkup.setSelective(true);
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(false);
+
+        // Создаем список строк клавиатуры
+        List<KeyboardRow> keyboard = new ArrayList<>();
+
+        // Первая строчка клавиатуры
+        KeyboardRow keyboardFirstRow = new KeyboardRow();
+        String[] Weeks={"ПН","ВТ","СР","ЧТ","ПТ","СБ","ВС"};
+        for(int i=0;i<7;i++)
+        // Добавляем кнопки в первую строчку клавиатуры
+            keyboardFirstRow.add(Weeks[i]);
+
+       /* KeyboardRow keyboardSecondRow = new KeyboardRow();
+
+        keyboardSecondRow.add("Обо мне \uD83E\uDD16");*/
+
+
+
+        // Добавляем все строчки клавиатуры в список
+        keyboard.add(keyboardFirstRow);
+        //keyboard.add(keyboardSecondRow);
+
+        // и устанваливаем этот список нашей клавиатуре
+        replyKeyboardMarkup.setKeyboard(keyboard);
+
+        sendMessage.setChatId(message.getChatId().toString());
+
+        sendMessage.setText(text);
+        try {
+            sendMessage(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 
 }
