@@ -12,6 +12,13 @@ import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.*;
+
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,17 +43,32 @@ public  class Bot extends TelegramLongPollingBot {
                             sendMsg(message, "Это команда старт!");
                             System.out.println(message.getText());
                             break;
-                        case "Календарь":
+                        case "Календарь \uD83D\uDCC5":
                             sendMsg(message, "Это календарь,реализацию пока не подвезли.Sorry");
                             execute(sendInlineKeyBoardMessage(update.getMessage().getChatId()));
                             System.out.println(message.getText());
                             break;
-                        case "Помощь":
-                            sendMsg(message, "Пока тут пусто,но скоро что-то появиться(◕‿◕)");
-                            System.out.println(message.getText());
+                        case "Обо мне \uD83E\uDD16":
+                            SendMessage sendMessage=new SendMessage().setChatId(update.getMessage().getChatId()).setText("Обо мне \uD83E\uDD16 \nСелезнев Сергей Александрович \nРепетитор по информатике/программированию и математике \nЭтот бот позволяет узнать мое расписание занятий");
+
+                            InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
+                            List < List < InlineKeyboardButton >> rowsInline = new ArrayList < > ();
+                            List < InlineKeyboardButton > rowInline = new ArrayList < > ();
+                            rowInline.add(new InlineKeyboardButton().setText("Ссылка на профиль").setUrl("https://repetit.ru/repetitor.aspx?id=148297"));
+                            rowsInline.add(rowInline);
+                            markupInline.setKeyboard(rowsInline);
+                            sendMessage.setReplyMarkup(markupInline);
+                            try {
+                                execute(sendMessage); // Sending our message object to user
+                            } catch (TelegramApiException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case "/Password":
+                            sendMsg(message, "Введите пароль");
                             break;
                         default:
-                            sendMsg(message, "Выберите команду из списка !!! (◣_◢)");
+
                             System.out.println(message.getText());
                             break;
                     }
@@ -58,6 +80,14 @@ public  class Bot extends TelegramLongPollingBot {
 
             }
 
+        }else if(update.hasCallbackQuery()){
+            try {
+                execute(new SendMessage().setText(
+                        update.getCallbackQuery().getData())
+                        .setChatId(update.getCallbackQuery().getMessage().getChatId()));
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -90,19 +120,23 @@ public  class Bot extends TelegramLongPollingBot {
         // Первая строчка клавиатуры
         KeyboardRow keyboardFirstRow = new KeyboardRow();
         // Добавляем кнопки в первую строчку клавиатуры
-        keyboardFirstRow.add("Календарь");
-        keyboardFirstRow.add("Помощь");
+        keyboardFirstRow.add("Календарь \uD83D\uDCC5");
+
+        KeyboardRow keyboardSecondRow = new KeyboardRow();
+
+        keyboardSecondRow.add("Обо мне \uD83E\uDD16");
 
 
 
         // Добавляем все строчки клавиатуры в список
         keyboard.add(keyboardFirstRow);
+        keyboard.add(keyboardSecondRow);
 
         // и устанваливаем этот список нашей клавиатуре
         replyKeyboardMarkup.setKeyboard(keyboard);
 
         sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setReplyToMessageId(message.getMessageId());
+        //sendMessage.setReplyToMessageId(message.getMessageId());
         sendMessage.setText(text);
         try {
             sendMessage(sendMessage);
@@ -114,23 +148,48 @@ public  class Bot extends TelegramLongPollingBot {
 
     @SuppressWarnings("deprecation") // Означает то, что в новых версиях метод уберут или заменят
     public static SendMessage sendInlineKeyBoardMessage(long chatId) {
+
+        MyCalendar calendar=new MyCalendar();
+
+
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
-        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
-        inlineKeyboardButton1.setText("Тык");
-        inlineKeyboardButton1.setCallbackData("Button \"Тык\" has been pressed");
-        inlineKeyboardButton2.setText("Тык2");
-        inlineKeyboardButton2.setCallbackData("Button \"Тык2\" has been pressed");
+        InlineKeyboardButton[] inlineKeyboardButtonsDayOfWeeks=new InlineKeyboardButton[7];
+        for(int i=0;i<7;i++)
+            inlineKeyboardButtonsDayOfWeeks[i]=new InlineKeyboardButton();
+
+        String[] Weeks={"ПН","ВТ","СР","ЧТ","ПТ","СБ","ВС"};
+
+        inlineKeyboardButton1.setText(""+calendar.getMonth());
+
+
+
+        inlineKeyboardButton1.setCallbackData("Ноябрь");
+
+
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
+
+
+
         keyboardButtonsRow1.add(inlineKeyboardButton1);
-        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("Fi4a").setCallbackData("CallFi4a"));
-        keyboardButtonsRow2.add(inlineKeyboardButton2);
+        for(int i=0;i<7;i++)
+        {
+            inlineKeyboardButtonsDayOfWeeks[i].setText(Weeks[i]);
+            inlineKeyboardButtonsDayOfWeeks[i].setCallbackData(Weeks[i]);
+            keyboardButtonsRow2.add(inlineKeyboardButtonsDayOfWeeks[i]);
+        }
+
+
+
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow1);
         rowList.add(keyboardButtonsRow2);
+
+
         inlineKeyboardMarkup.setKeyboard(rowList);
-        return new SendMessage().setChatId(chatId).setText("Пример").setReplyMarkup(inlineKeyboardMarkup);
+
+        return new SendMessage().setChatId(chatId).setText("Календарь \uD83D\uDCC5").setReplyMarkup(inlineKeyboardMarkup);
     }
 
 }
