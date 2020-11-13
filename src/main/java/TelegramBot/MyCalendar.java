@@ -92,6 +92,7 @@ public class MyCalendar {
                 result += "* Имя:*" +innerObj.get("Имя") + "\t *Время:*" + innerObj.get("Время") + "\t *Локация:*" + innerObj.get("Локация") + "\n\n";
             }
         }
+        reader.close();
         return result;
     }
 
