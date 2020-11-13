@@ -42,7 +42,7 @@ public  class Bot extends TelegramLongPollingBot {
             if (update.getMessage().hasText()) {
                 switch (message.getText()) {
                     case "/start":
-                        sendMsg(message, "Это команда старт!");
+                        sendMsg(message,"Hello");
                         System.out.println(message.getText());
                         break;
                     case "Календарь \uD83D\uDCC5":
@@ -67,9 +67,21 @@ public  class Bot extends TelegramLongPollingBot {
                             e.printStackTrace();
                         }
                         break;
+
                     case "/Password":
                         sendMsg(message, "Введите пароль:");
+                        if(update.hasMessage())
+                            if (update.getMessage().hasText())
+                                if(update.getMessage().getText()=="19805035"){
+                                    try {
+                                        execute(sendInlineKeyBoardMessage(update.getMessage().getChatId()));
+                                    } catch (TelegramApiException e) {
+                                        e.printStackTrace();
+                                    }
+                        }
                         break;
+
+
                     case "ПН":
                         try {
                             sendMsg(message,printTableOnDay("Понедельник"));
@@ -134,7 +146,7 @@ public  class Bot extends TelegramLongPollingBot {
                         }
                         break;
                     default:
-
+                        sendMsg(message, "Hello");
                         System.out.println(message.getText());
                         break;
                 }
@@ -211,45 +223,23 @@ public  class Bot extends TelegramLongPollingBot {
     @SuppressWarnings("deprecation") // Означает то, что в новых версиях метод уберут или заменят
     public static SendMessage sendInlineKeyBoardMessage(long chatId)  {
 
-        MyCalendar calendar=new MyCalendar();
-
-
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
-        InlineKeyboardButton[] inlineKeyboardButtonsDayOfWeeks=new InlineKeyboardButton[7];
-        for(int i=0;i<7;i++)
-            inlineKeyboardButtonsDayOfWeeks[i]=new InlineKeyboardButton();
-
-        String[] Weeks={"ПН","ВТ","СР","ЧТ","ПТ","СБ","ВС"};
-
-
-        inlineKeyboardButton1.setText(""+calendar.getData());
-
-
-        inlineKeyboardButton1.setCallbackData("Ноябрь");
-
-
+        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
+        inlineKeyboardButton1.setText("Тык");
+        inlineKeyboardButton1.setCallbackData("Button \"Тык\" has been pressed");
+        inlineKeyboardButton2.setText("Тык2");
+        inlineKeyboardButton2.setCallbackData("Button \"Тык2\" has been pressed");
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
-
         keyboardButtonsRow1.add(inlineKeyboardButton1);
-
-
-        for(int i=0;i<7;i++)
-        {
-            inlineKeyboardButtonsDayOfWeeks[i].setText(Weeks[i]);
-            inlineKeyboardButtonsDayOfWeeks[i].setCallbackData(Weeks[i]);
-            keyboardButtonsRow2.add(inlineKeyboardButtonsDayOfWeeks[i]);
-        }
-
+        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("Fi4a").setCallbackData("CallFi4a"));
+        keyboardButtonsRow2.add(inlineKeyboardButton2);
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow1);
         rowList.add(keyboardButtonsRow2);
-
-
         inlineKeyboardMarkup.setKeyboard(rowList);
-
-        return new SendMessage().setChatId(chatId).setText("Календарь \uD83D\uDCC5").setReplyMarkup(inlineKeyboardMarkup);
+        return new SendMessage().setChatId(chatId).setText("Пример").setReplyMarkup(inlineKeyboardMarkup);
     }
 
     public void sendMsgWeeks (Message message, String text) {
