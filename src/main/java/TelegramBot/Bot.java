@@ -20,8 +20,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.*;
-
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +69,60 @@ public  class Bot extends TelegramLongPollingBot {
                         break;
                     case "/Password":
                         sendMsg(message, "Введите пароль:");
+                        break;
+                    case "ПН":
+                        try {
+                            sendMsg(message,printTableOnDay("Понедельник"));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case "ВТ":
+                        try {
+                            sendMsg(message,printTableOnDay("Вторник"));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case "СР":
+                        try {
+                            sendMsg(message,printTableOnDay("Среда"));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case "ЧТ":
+                        try {
+                            sendMsg(message,printTableOnDay("Четверг"));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case "ПТ":
+                        try {
+                            sendMsg(message,printTableOnDay("Пятница"));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case "СБ":
+                        try {
+                            sendMsg(message,printTableOnDay("Суббота"));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case "ВС":
                         try {
@@ -171,8 +223,7 @@ public  class Bot extends TelegramLongPollingBot {
         String[] Weeks={"ПН","ВТ","СР","ЧТ","ПТ","СБ","ВС"};
 
 
-        inlineKeyboardButton1.setText(""+calendar.getMonth());
-
+        inlineKeyboardButton1.setText(""+calendar.getData());
 
 
         inlineKeyboardButton1.setCallbackData("Ноябрь");
@@ -180,8 +231,6 @@ public  class Bot extends TelegramLongPollingBot {
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
-
-
 
         keyboardButtonsRow1.add(inlineKeyboardButton1);
 
@@ -192,9 +241,6 @@ public  class Bot extends TelegramLongPollingBot {
             inlineKeyboardButtonsDayOfWeeks[i].setCallbackData(Weeks[i]);
             keyboardButtonsRow2.add(inlineKeyboardButtonsDayOfWeeks[i]);
         }
-
-
-
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow1);
@@ -210,7 +256,10 @@ public  class Bot extends TelegramLongPollingBot {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
+        MyCalendar calendar=new MyCalendar();
+
         // Создаем клавиуатуру
+
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         sendMessage.setReplyMarkup(replyKeyboardMarkup);
         replyKeyboardMarkup.setSelective(true);
@@ -222,20 +271,19 @@ public  class Bot extends TelegramLongPollingBot {
 
         // Первая строчка клавиатуры
         KeyboardRow keyboardFirstRow = new KeyboardRow();
+        // Добавляем кнопки в первую строчку клавиатуры
+        keyboardFirstRow.add(""+calendar.getData());
+
+        // Вторая строчка клавиатуры
+        KeyboardRow keyboardSecondRow = new KeyboardRow();
         String[] Weeks={"ПН","ВТ","СР","ЧТ","ПТ","СБ","ВС"};
         for(int i=0;i<7;i++)
         // Добавляем кнопки в первую строчку клавиатуры
-            keyboardFirstRow.add(Weeks[i]);
-
-       /* KeyboardRow keyboardSecondRow = new KeyboardRow();
-
-        keyboardSecondRow.add("Обо мне \uD83E\uDD16");*/
-
-
+            keyboardSecondRow.add(Weeks[i]);
 
         // Добавляем все строчки клавиатуры в список
         keyboard.add(keyboardFirstRow);
-        //keyboard.add(keyboardSecondRow);
+        keyboard.add(keyboardSecondRow);
 
         // и устанваливаем этот список нашей клавиатуре
         replyKeyboardMarkup.setKeyboard(keyboard);
@@ -248,6 +296,7 @@ public  class Bot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+
     }
 
 }

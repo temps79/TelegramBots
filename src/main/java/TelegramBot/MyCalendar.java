@@ -15,54 +15,17 @@ import java.util.Iterator;
 
 public class MyCalendar {
     private Calendar date;
-    private String Month;
+    private String Data;
     private static final String filePath = "C:\\Users\\temps\\Desktop\\TelegramBot\\src\\main\\resources\\TableView.json";
 
 
 
     MyCalendar(){
         Calendar date=Calendar.getInstance();
-        Month=new SimpleDateFormat("MMMM").format(date.getTime());
-    }
-
-    /*public static void main(String[] args) throws IOException, ParseException {
-
-        try{
-            // считывание файла JSON
-        FileReader reader = new FileReader(filePath);
-
-        JSONParser jsonParser = new JSONParser();
-        JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
-
-        // получение массива
-        JSONArray lang=(JSONArray) jsonObject.get("День");
-       // System.out.println(lang);
-
-            String result=new String();
-        JSONObject day=(JSONObject) lang.get(5);
-            //System.out.println( day);
-            JSONArray temp=(JSONArray) day.get("Воскресенье");
-            Iterator it=temp.iterator();
-            while(it.hasNext()){
-                JSONObject innerObj = (JSONObject) it.next();
-                result+="Имя:"+innerObj.get("Имя")+"\t Время:"+innerObj.get("Время")+"\t Локация:"+ innerObj.get("Локация")+"\n";
-
-            }
-            System.out.println(result);
-
-
-    } catch (FileNotFoundException ex) {
-        ex.printStackTrace();
-    } catch (IOException ex) {
-        ex.printStackTrace();
-    } catch (ParseException ex) {
-        ex.printStackTrace();
-    } catch (NullPointerException ex) {
-        ex.printStackTrace();
+        Data=new SimpleDateFormat("d MMMM yyyy").format(date.getTime());
     }
 
 
-    }*/
 
     public static String printTableOnDay(String day) throws IOException, ParseException {
         FileReader reader = new FileReader(filePath);
@@ -71,22 +34,47 @@ public class MyCalendar {
         JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
         // получение массива
         JSONArray lang= (JSONArray) jsonObject.get("День");
+        JSONObject obj=new JSONObject();
         switch(day){
-            case "Воскресенье":
-                JSONObject obj=(JSONObject) lang.get(5);
-                JSONArray temp=(JSONArray) obj.get("Воскресенье");
-                Iterator it=temp.iterator();
-                while(it.hasNext()){
-                    JSONObject innerObj = (JSONObject) it.next();
-                    result+="Имя:"+innerObj.get("Имя")+"\t Время:"+innerObj.get("Время")+"\t Локация:"+ innerObj.get("Локация")+"\n";
-                }
+            case "Понедельник":
+                obj=(JSONObject) lang.get(0);
                 break;
+            case "Вторник":
+                obj=(JSONObject) lang.get(1);
+                break;
+            case "Среда":
+                obj=(JSONObject) lang.get(2);
+                break;
+            case "Четверг":
+                obj=(JSONObject) lang.get(3);
+                break;
+            case "Пятница":
+                obj=(JSONObject) lang.get(4);
+                break;
+            case "Суббота":
+                obj=(JSONObject) lang.get(5);
+                break;
+            case "Воскресенье":
+                obj=(JSONObject) lang.get(6);
+                break;
+
+        }
+
+        JSONArray temp=(JSONArray) obj.get(day);
+        if(temp.isEmpty())
+            result="Выходной";
+        else {
+            Iterator it = temp.iterator();
+            while (it.hasNext()) {
+                JSONObject innerObj = (JSONObject) it.next();
+                result += "Имя:" + innerObj.get("Имя") + "\t Время:" + innerObj.get("Время") + "\t Локация:" + innerObj.get("Локация") + "\n\n";
+            }
         }
         return result;
     }
 
-    public String getMonth() {
-        return Month;
+    public String getData() {
+        return Data;
     }
 
 
