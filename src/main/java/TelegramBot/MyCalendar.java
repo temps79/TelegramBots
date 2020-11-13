@@ -1,6 +1,8 @@
 package TelegramBot;
 
 import com.google.api.client.json.Json;
+import com.google.api.client.json.JsonString;
+import org.json.JSONString;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -32,9 +34,11 @@ public class MyCalendar {
 
     public static String printTableOnDay(String day) throws IOException, ParseException {
 
-        FileReader reader = new FileReader(ClassLoader.getSystemResource("TableView.json").getPath());
+        //FileReader reader = new FileReader(ClassLoader.getSystemResource("TableView.json").getPath());
+        String str="{\"День\":[{\"Понедельник\":[{\"Время\":\"16:00\",\"Имя\":\"Федор(ЕГЭ)\",\"Локация\":\"Дом\"}]},{\"Вторник\":[{\"Время\":\"18:00\",\"Имя\":\"Егор(6 класс)\",\"Локация\":\"Обухово\"}]},{\"Среда\":[{\"Время\":\"16:00\",\"Имя\":\"Влад(С++)\",\"Локация\":\"Дом\"},{\"Время\":\"18:00\",\"Имя\":\"Федор(ЕГЭ)\",\"Локация\":\"Дом\"}]},{\"Четверг\":[]},{\"Пятница\":[{\"Время\":\"18:00\",\"Имя\":\"Егор(6 класс)\",\"Локация\":\"Обухово\"},{\"Время\":\"19:00\",\"Имя\":\"Павел(Си)\",\"Локация\":\"Дом\"},{\"Время\":\"20:00\",\"Имя\":\"Анна(10 класс)\",\"Локация\":\"Дом\"}]},{\"Суббота\":[{\"Время\":\"19:00\",\"Имя\":\"Антон(Си)\",\"Локация\":\"Дом\"},{\"Время\":\"20:00\",\"Имя\":\"Федор(ЕГЭ)\",\"Локация\":\"Дом\"}]},{\"Воскресенье\":[{\"Время\":\"10:00\",\"Имя\":\"Андрей\",\"Локация\":\"Электроугли\"},{\"Время\":\"13:00\",\"Имя\":\"Александр(С#)\",\"Локация\":\"Дом\"},{\"Время\":\"14:00\",\"Имя\":\"Влад(С++)\",\"Локация\":\"Дом\"},{\"Время\":\"16:00\",\"Имя\":\"Ярослав(Java)\",\"Локация\":\"Ногинск\"},{\"Время\":\"21:00\",\"Имя\":\"Павел(Си)\",\"Локация\":\"Дом\"}]}],\"Понедельник\":[{\"Время\":\"16:00\",\"Имя\":\"Федор(ЕГЭ)\",\"Локация\":\"Дом\"},{\"Время\":\"15:00\",\"Имя\":\"Иван\",\"Локация\":\"Дом\"},{\"Время\":\"15:00\",\"Имя\":\"Иван\",\"Локация\":\"Дом\"}]}";
         JSONParser jsonParser = new JSONParser();
-        JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
+        JSONObject jsonObject = (JSONObject) jsonParser.parse(str);
+
 
         String result=new String();
         Calendar c = Calendar.getInstance();
@@ -92,7 +96,7 @@ public class MyCalendar {
                 result += "* Имя:*" +innerObj.get("Имя") + "\t *Время:*" + innerObj.get("Время") + "\t *Локация:*" + innerObj.get("Локация") + "\n\n";
             }
         }
-        reader.close();
+        
         return result;
     }
 
