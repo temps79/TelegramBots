@@ -32,7 +32,7 @@ public class MyCalendar {
 
     public static String printTableOnDay(String day) throws IOException, ParseException {
 
-        FileReader reader = new FileReader(filePath);
+        FileReader reader = new FileReader(ClassLoader.getSystemResource("TableView.json").getPath());
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
 
