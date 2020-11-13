@@ -3,11 +3,13 @@ package TelegramBot;
 import com.google.api.client.json.Json;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -15,8 +17,8 @@ import java.util.Calendar;
 import java.util.Iterator;
 
 public class MyCalendar {
-    private Calendar date;
-    private String Data;
+    private  Calendar date;
+    private  String Data;
     private static final String filePath = "C:\\Users\\temps\\Desktop\\TelegramBot\\src\\main\\resources\\TableView.json";
 
 
@@ -29,15 +31,15 @@ public class MyCalendar {
 
 
     public static String printTableOnDay(String day) throws IOException, ParseException {
+
         FileReader reader = new FileReader(filePath);
-        String result=new String();
-
-
-
-        Calendar c = Calendar.getInstance();
-
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
+
+        String result=new String();
+        Calendar c = Calendar.getInstance();
+
+
         // получение массива
         JSONArray lang= (JSONArray) jsonObject.get("День");
         JSONObject obj=new JSONObject();
@@ -93,7 +95,81 @@ public class MyCalendar {
         return result;
     }
 
-    public String getData() {
+    public static void addEvent(String name,String time,String location,String day) throws IOException, ParseException {
+        //Делаем первый элемент id
+        JSONObject addObj = new JSONObject();
+        addObj.put("Имя", name);
+        addObj.put("Время",time);
+        addObj.put("Локация",location);
+
+        //Добавляем в главный
+        FileReader reader = new FileReader(filePath);
+        JSONParser jsonParser = new JSONParser();
+        JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
+
+        // получение массива
+        JSONArray lang= (JSONArray) jsonObject.get("День");
+        JSONObject obj=new JSONObject();
+        JSONArray list=new JSONArray();
+
+        switch(day){
+            case "Понедельник":
+                obj=(JSONObject) lang.get(0);
+                list= (JSONArray) obj.get(day);
+                list.add(addObj);
+                jsonObject.put(day,list);
+                break;
+            case "Вторник":
+                obj=(JSONObject) lang.get(1);
+                list= (JSONArray) obj.get(day);
+                list.add(addObj);
+                jsonObject.put(day,list);
+                break;
+            case "Среда":
+                obj=(JSONObject) lang.get(2);
+                list= (JSONArray) obj.get(day);
+                list.add(addObj);
+                jsonObject.put(day,list);
+                break;
+            case "Четверг":
+                obj=(JSONObject) lang.get(3);
+                list= (JSONArray) obj.get(day);
+                list.add(addObj);
+                jsonObject.put(day,list);
+                break;
+            case "Пятница":
+                obj=(JSONObject) lang.get(4);
+                list= (JSONArray) obj.get(day);
+                list.add(addObj);
+                jsonObject.put(day,list);
+                break;
+            case "Суббота":
+                obj=(JSONObject) lang.get(5);
+                list= (JSONArray) obj.get(day);
+                list.add(addObj);
+                jsonObject.put(day,list);
+                break;
+            case "Воскресенье":
+                obj=(JSONObject) lang.get(6);
+                list= (JSONArray) obj.get(day);
+                list.add(addObj);
+                jsonObject.put(day,list);
+                break;
+
+        }
+        reader.close();
+        try {
+            FileWriter writer = new FileWriter(filePath);
+            writer.write(jsonObject.toJSONString());
+            writer.flush();
+            writer.close();
+        }catch(IOException ex){
+            ex.printStackTrace();
+        }
+
+
+    }
+    public  String getData() {
         return Data;
     }
 
