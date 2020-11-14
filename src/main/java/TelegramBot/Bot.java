@@ -16,6 +16,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import javax.swing.text.TabableView;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import java.util.List;
 
 
 import static TelegramBot.MyCalendar.printTableOnDay;
+import static TelegramBot.SheetsQuickstart.printTable;
 
 public  class Bot extends TelegramLongPollingBot {
 
@@ -67,74 +69,66 @@ public  class Bot extends TelegramLongPollingBot {
                         }
                         break;
 
-                    case "19805035":
-                        try {
-
-                            execute(sendInlineKeyBoardMessage(update.getMessage().getChatId()));
-                        } catch (TelegramApiException e) {
-                            e.printStackTrace();
-                        }
-                        break;
                     case "ПН":
                         try {
-                            sendMsg(message,printTableOnDay("Понедельник"));
+                            sendMsg(message,printTable("Понедельник"));
                         } catch (IOException e) {
                             e.printStackTrace();
-                        } catch (ParseException e) {
+                        } catch (GeneralSecurityException e) {
                             e.printStackTrace();
                         }
                         break;
                     case "ВТ":
                         try {
-                            sendMsg(message,printTableOnDay("Вторник"));
+                            sendMsg(message,printTable("Вторник"));
                         } catch (IOException e) {
                             e.printStackTrace();
-                        } catch (ParseException e) {
+                        } catch (GeneralSecurityException e) {
                             e.printStackTrace();
                         }
                         break;
                     case "СР":
                         try {
-                            sendMsg(message,printTableOnDay("Среда"));
+                            sendMsg(message,printTable("Среда"));
                         } catch (IOException e) {
                             e.printStackTrace();
-                        } catch (ParseException e) {
+                        } catch (GeneralSecurityException e) {
                             e.printStackTrace();
                         }
                         break;
                     case "ЧТ":
                         try {
-                            sendMsg(message,printTableOnDay("Четверг"));
+                            sendMsg(message,printTable("Четверг"));
                         } catch (IOException e) {
                             e.printStackTrace();
-                        } catch (ParseException e) {
+                        } catch (GeneralSecurityException e) {
                             e.printStackTrace();
                         }
                         break;
                     case "ПТ":
                         try {
-                            sendMsg(message,printTableOnDay("Пятница"));
+                            sendMsg(message,printTable("Пятница"));
                         } catch (IOException e) {
                             e.printStackTrace();
-                        } catch (ParseException e) {
+                        } catch (GeneralSecurityException e) {
                             e.printStackTrace();
                         }
                         break;
                     case "СБ":
                         try {
-                            sendMsg(message,printTableOnDay("Суббота"));
+                            sendMsg(message,printTable("Суббота"));
                         } catch (IOException e) {
                             e.printStackTrace();
-                        } catch (ParseException e) {
+                        } catch (GeneralSecurityException e) {
                             e.printStackTrace();
                         }
                         break;
                     case "ВС":
                         try {
-                            sendMsg(message,printTableOnDay("Воскресенье"));
+                            sendMsg(message,printTable("Воскресенье"));
                         } catch (IOException e) {
                             e.printStackTrace();
-                        } catch (ParseException e) {
+                        } catch (GeneralSecurityException e) {
                             e.printStackTrace();
                         }
                         break;
@@ -158,26 +152,7 @@ public  class Bot extends TelegramLongPollingBot {
         }
     }
 
-    public static SendMessage sendInlineKeyBoardMessage(long chatId) {
 
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
-        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
-        inlineKeyboardButton1.setText("Добавить");
-        inlineKeyboardButton1.setCallbackData("Добавить");
-        inlineKeyboardButton2.setText("Удалить");
-        inlineKeyboardButton2.setCallbackData("Удалить");
-        List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
-        keyboardButtonsRow1.add(inlineKeyboardButton1);
-
-        keyboardButtonsRow2.add(inlineKeyboardButton2);
-        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        rowList.add(keyboardButtonsRow1);
-        rowList.add(keyboardButtonsRow2);
-        inlineKeyboardMarkup.setKeyboard(rowList);
-        return new SendMessage().setChatId(chatId).setText("Управление расписанием").setReplyMarkup(inlineKeyboardMarkup);
-    }
 
     public String getBotUsername() {
         return "TableBot"; //   //возвращаем юзера
