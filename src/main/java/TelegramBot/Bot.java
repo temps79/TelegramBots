@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import static TelegramBot.MyCalendar.printTableOnDay;
+
 import static TelegramBot.SheetsQuickstart.printTable;
 
 public  class Bot extends TelegramLongPollingBot {
