@@ -123,7 +123,7 @@ public class SheetsQuickstart {
                 }
                 break;
             case "Вторник":
-                c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+                c.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
                 if(temp.after(c))
                     c.add(Calendar.DATE,7);
                 break;
