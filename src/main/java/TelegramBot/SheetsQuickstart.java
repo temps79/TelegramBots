@@ -114,27 +114,44 @@ public class SheetsQuickstart {
 
         String result=new String();
         Calendar c = Calendar.getInstance();
+        Calendar temp=  Calendar.getInstance();
         switch(day){
             case "Понедельник":
                 c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+                if(temp.after(c)) {
+                    c.add(Calendar.DATE,7);
+                }
                 break;
             case "Вторник":
-                c.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
+                c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+                if(temp.after(c))
+                    c.add(Calendar.DATE,7);
                 break;
             case "Среда":
                 c.set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY);
+                if(temp.after(c))
+                    c.add(Calendar.DATE,7);
                 break;
             case "Четверг":
                 c.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY);
+                if(temp.after(c))
+                    c.add(Calendar.DATE,7);
                 break;
             case "Пятница":
                 c.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+                if(temp.after(c))
+                    c.add(Calendar.DATE,7);
+
                 break;
             case "Суббота":
                 c.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+                if(temp.after(c))
+                    c.add(Calendar.DATE,7);
                 break;
             case "Воскресенье":
                 c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+                if(temp.after(c))
+                    c.add(Calendar.DATE,7);
                 break;
 
         }

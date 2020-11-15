@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.*;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
+import static TelegramBot.MyCalendar.getData;
 import static TelegramBot.SheetsQuickstart.printTable;
 
 public  class Bot extends TelegramLongPollingBot {
@@ -42,8 +43,10 @@ public  class Bot extends TelegramLongPollingBot {
     }
     public void onUpdateReceived(Update update) {
         Message message = update.getMessage();
+        final  String c=new MyCalendar().getData();
         if(update.hasMessage()) {
             if (update.getMessage().hasText()) {
+
                 switch (message.getText()) {
                     case "/start":
                         sendMsg(message,"Нажмите на кнопку");
@@ -230,7 +233,7 @@ public  class Bot extends TelegramLongPollingBot {
         // Первая строчка клавиатуры
         KeyboardRow keyboardFirstRow = new KeyboardRow();
         // Добавляем кнопки в первую строчку клавиатуры
-        keyboardFirstRow.add(""+calendar.getData());
+        keyboardFirstRow.add(""+ getData());
 
         // Вторая строчка клавиатуры
         KeyboardRow keyboardSecondRow = new KeyboardRow();
