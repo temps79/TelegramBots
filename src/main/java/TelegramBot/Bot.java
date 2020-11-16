@@ -43,6 +43,7 @@ public  class Bot extends TelegramLongPollingBot {
     }
     public void onUpdateReceived(Update update) {
         Message message = update.getMessage();
+
         final  String c=new MyCalendar().getData();
         if(update.hasMessage()) {
             if (update.getMessage().hasText()) {
@@ -74,7 +75,7 @@ public  class Bot extends TelegramLongPollingBot {
 
                     case "ПН":
                         try {
-                            sendMsg(message,printTable("Понедельник"));
+                            sendMsgWeeks(message,printTable("Понедельник"));
                         } catch (IOException e) {
                             e.printStackTrace();
                         } catch (GeneralSecurityException e) {
@@ -83,7 +84,7 @@ public  class Bot extends TelegramLongPollingBot {
                         break;
                     case "ВТ":
                         try {
-                            sendMsg(message,printTable("Вторник"));
+                            sendMsgWeeks(message,printTable("Вторник"));
                         } catch (IOException e) {
                             e.printStackTrace();
                         } catch (GeneralSecurityException e) {
@@ -92,7 +93,7 @@ public  class Bot extends TelegramLongPollingBot {
                         break;
                     case "СР":
                         try {
-                            sendMsg(message,printTable("Среда"));
+                            sendMsgWeeks(message,printTable("Среда"));
                         } catch (IOException e) {
                             e.printStackTrace();
                         } catch (GeneralSecurityException e) {
@@ -101,7 +102,7 @@ public  class Bot extends TelegramLongPollingBot {
                         break;
                     case "ЧТ":
                         try {
-                            sendMsg(message,printTable("Четверг"));
+                            sendMsgWeeks(message,printTable("Четверг"));
                         } catch (IOException e) {
                             e.printStackTrace();
                         } catch (GeneralSecurityException e) {
@@ -110,7 +111,7 @@ public  class Bot extends TelegramLongPollingBot {
                         break;
                     case "ПТ":
                         try {
-                            sendMsg(message,printTable("Пятница"));
+                            sendMsgWeeks(message,printTable("Пятница"));
                         } catch (IOException e) {
                             e.printStackTrace();
                         } catch (GeneralSecurityException e) {
@@ -119,7 +120,7 @@ public  class Bot extends TelegramLongPollingBot {
                         break;
                     case "СБ":
                         try {
-                            sendMsg(message,printTable("Суббота"));
+                            sendMsgWeeks(message,printTable("Суббота"));
                         } catch (IOException e) {
                             e.printStackTrace();
                         } catch (GeneralSecurityException e) {
@@ -128,14 +129,14 @@ public  class Bot extends TelegramLongPollingBot {
                         break;
                     case "ВС":
                         try {
-                            sendMsg(message,printTable("Воскресенье"));
+                            sendMsgWeeks(message,printTable("Воскресенье"));
                         } catch (IOException e) {
                             e.printStackTrace();
                         } catch (GeneralSecurityException e) {
                             e.printStackTrace();
                         }
                         break;
-
+                    
                     default:
                         sendMsg(message, "Нажмите на кнопку");
                         System.out.println(message.getText());
