@@ -2,7 +2,6 @@ package TelegramBot;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
@@ -30,7 +29,10 @@ import static TelegramBot.SelectedWeeks.selected;
 import static TelegramBot.SheetsQuickstart.printTable;
 
 
+
+
 public class Bot extends TelegramLongPollingBot {
+
     int status=0;
     @Setter
     @Getter
@@ -79,7 +81,7 @@ public class Bot extends TelegramLongPollingBot {
                 status = 2;
             } else if (message.getText().equals("Обо мне \uD83E\uDD16") && status == 1) {
                 ReferenceURL(update);
-                status = 0;
+                status = 1;
             } else if (message.getText().equals("ПН") || message.getText().equals("ВТ") || message.getText().equals("СР") || message.getText().equals("ЧТ") || message.getText().equals("ПТ") || message.getText().equals("СБ") || message.getText().equals("ВС") && status == 2) {
                 try {
                     sendMsgWeeks(message, printTable(selected(message)));
@@ -98,18 +100,16 @@ public class Bot extends TelegramLongPollingBot {
             }else if(message.hasText()&&status==3){
                 Person.setName(message.getText());
                 sendMessageTxt(message,"Желаемый день/время:");
-
                 status=4;
             }else if(message.hasText()&&status==4){
                 Person.setDate(message.getText());
                 sendMessageTxt(message,"Ваши контакты для связи(Способ связи)?");
-
                 status=5;
             }else if(message.hasText()&&status==5){
                 Person.setNumber(message.getText());
                 sendMsg(message,"Ваша заявка поступила в модерацию\nВ ближайщее время с вами свяжуться\nДля продолжения введите/нажмите [/start]");
-                String UserName=message.getChat().getUserName().toString();
-                sendInfo(message,Person.getName()+" "+Person.getDate()+" "+Person.getNumber()+" "+UserName);
+                Chat chat=message.getChat();
+                sendInfo(message,Person.getName()+" "+Person.getDate()+" "+Person.getNumber()+"|"+chat.getFirstName()+" "+chat.getLastName());
                 status=1;
             }
 
@@ -125,12 +125,9 @@ public class Bot extends TelegramLongPollingBot {
         }
 
     }
-
     void sendMessageTxt(Message message,String text){
         SendMessage sendMessage = new SendMessage();
-        sendMessage.enableMarkdown(true);
         sendMessage.setChatId(message.getChatId().toString());
-
         sendMessage.setText(text);
         try {
             sendMessage(sendMessage);
@@ -141,11 +138,10 @@ public class Bot extends TelegramLongPollingBot {
     void sendInfo(Message message,String text){
 
         SendMessage sendMessage = new SendMessage();
-        sendMessage.enableMarkdown(true);
-
-        sendMessage.setChatId("491099045 ");
+        sendMessage.setChatId("491099045");
 
         sendMessage.setText(text);
+        System.out.println(text);
         try {
             sendMessage(sendMessage);
         } catch (TelegramApiException e) {

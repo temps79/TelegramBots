@@ -11,7 +11,7 @@ public class Application {
 
     public static void main(String[] args) {
         ApiContextInitializer.init();
-        Bot telegram_bot = new Bot("sschedule_bot", "1451992685:AAEmF5nIGLrFGY11xQsdceyTPT_sr7j6WBw");
+        Bot telegram_bot = new Bot("TimeTablee_bot", "1491572212:AAHy-6x6yfFCkAIalyNtnNjJC9Ue10OCr0c");
         telegram_bot.botConnect();
 
     }
