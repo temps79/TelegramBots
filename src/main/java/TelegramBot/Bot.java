@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -121,7 +122,8 @@ public class Bot extends TelegramLongPollingBot {
             }else if(message.hasText()&&status==5){
                 Person.setNumber(message.getText());
                 sendMsg(message,"Ваша заявка поступила в модерацию\nВ ближайщее время с вами свяжуться\nДля продолжения введите/нажмите [/start]");
-                sendInfo(message,Person.getName()+" "+Person.getDate()+" "+Person.getNumber());
+                String UserName=message.getChat().getUserName().toString();
+                sendInfo(message,Person.getName()+" "+Person.getDate()+" "+Person.getNumber()+" "+UserName);
                 status=0;
             }
 
