@@ -1,7 +1,7 @@
 package TelegramBot;
 
 public class Person {
-    static String Name;
+    static String Name=null;
     static String Date;
     static int status=0;
     static String Number;

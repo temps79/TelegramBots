@@ -31,28 +31,13 @@ import static TelegramBot.SheetsQuickstart.printTable;
 
 
 public class Bot extends TelegramLongPollingBot {
-
-
-    public Bot() {
-
-    }
-
-    public static void main(String[] args) {
-        ApiContextInitializer.init(); // Инициализируем апи
-        TelegramBotsApi botapi = new TelegramBotsApi();
-        try {
-            botapi.registerBot(new Bot());
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
     int status=0;
     @Setter
     @Getter
-    String botName="sschedule_bot";
+    String botName;
     @Setter
     @Getter
-    String token="1451992685:AAEmF5nIGLrFGY11xQsdceyTPT_sr7j6WBw";
+    String token;
 
     public Bot(String botName, String token) {
         this.botName=botName;
@@ -111,20 +96,21 @@ public class Bot extends TelegramLongPollingBot {
                 sendMsgWeeks(message, "Сегодня " + getData() + "\nВыберите день:");
                 status = 2;
             }else if(message.hasText()&&status==3){
-
                 Person.setName(message.getText());
-                sendMsg(message,"Желаемый день/время:");
+                sendMessageTxt(message,"Желаемый день/время:");
+
                 status=4;
             }else if(message.hasText()&&status==4){
                 Person.setDate(message.getText());
-                sendMsg(message,"Ваши контакты для связи(Способ связи)?");
+                sendMessageTxt(message,"Ваши контакты для связи(Способ связи)?");
+
                 status=5;
             }else if(message.hasText()&&status==5){
                 Person.setNumber(message.getText());
                 sendMsg(message,"Ваша заявка поступила в модерацию\nВ ближайщее время с вами свяжуться\nДля продолжения введите/нажмите [/start]");
                 String UserName=message.getChat().getUserName().toString();
                 sendInfo(message,Person.getName()+" "+Person.getDate()+" "+Person.getNumber()+" "+UserName);
-                status=0;
+                status=1;
             }
 
         }else if(update.hasCallbackQuery()){
@@ -140,6 +126,18 @@ public class Bot extends TelegramLongPollingBot {
 
     }
 
+    void sendMessageTxt(Message message,String text){
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.enableMarkdown(true);
+        sendMessage.setChatId(message.getChatId().toString());
+
+        sendMessage.setText(text);
+        try {
+            sendMessage(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
     void sendInfo(Message message,String text){
 
         SendMessage sendMessage = new SendMessage();
@@ -180,7 +178,7 @@ public class Bot extends TelegramLongPollingBot {
         sendMessage.setReplyMarkup(replyKeyboardMarkup);
         replyKeyboardMarkup.setSelective(true);
         replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboard(false);
+        replyKeyboardMarkup.setOneTimeKeyboard(true);
 
         // Создаем список строк клавиатуры
         List<KeyboardRow> keyboard = new ArrayList<>();
