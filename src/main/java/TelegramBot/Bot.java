@@ -2,6 +2,7 @@ package TelegramBot;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
@@ -30,13 +31,27 @@ import static TelegramBot.SheetsQuickstart.printTable;
 
 public class Bot extends TelegramLongPollingBot {
 
+
+    public Bot() {
+
+    }
+
+    public static void main(String[] args) {
+        ApiContextInitializer.init(); // Инициализируем апи
+        TelegramBotsApi botapi = new TelegramBotsApi();
+        try {
+            botapi.registerBot(new Bot());
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
     int status=0;
     @Setter
     @Getter
-    String botName;
+    String botName="sschedule_bot";
     @Setter
     @Getter
-    String token;
+    String token="1451992685:AAEmF5nIGLrFGY11xQsdceyTPT_sr7j6WBw";
 
     public Bot(String botName, String token) {
         this.botName=botName;
