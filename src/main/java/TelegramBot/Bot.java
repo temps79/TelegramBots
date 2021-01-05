@@ -4,9 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Chat;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.api.methods.updates.GetUpdates;
+import org.telegram.telegrambots.api.objects.*;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -22,11 +21,14 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
+import static TelegramBot.CalendarQuickstart.printTable;
 import static TelegramBot.MyCalendar.getData;
 import static TelegramBot.SelectedWeeks.selected;
-import static TelegramBot.SheetsQuickstart.printTable;
+
 
 
 
@@ -61,16 +63,23 @@ public class Bot extends TelegramLongPollingBot {
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
         try {
             telegramBotsApi.registerBot(this);
+
         } catch (TelegramApiRequestException e) {
             botConnect();
         }
     }
+    private final static long ADMIN_CHAT_ID=491099045;
+
 
 
     @Override
     public void onUpdateReceived(Update update) {
         Message message=update.getMessage();
+
         MyCalendar calendar = new MyCalendar();
+
+
+
         if(update.hasMessage()) {
             if ((message.hasText() && status == 0) || (message.getText().equals("/start"))) {
                 sendMsg(message, "*Выберите действие*");
@@ -138,10 +147,12 @@ public class Bot extends TelegramLongPollingBot {
     void sendInfo(Message message,String text){
 
         SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId("491099045");
+        sendMessage.setChatId(ADMIN_CHAT_ID);
 
         sendMessage.setText(text);
         System.out.println(text);
+
+
         try {
             sendMessage(sendMessage);
         } catch (TelegramApiException e) {

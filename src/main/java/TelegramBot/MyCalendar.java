@@ -17,7 +17,6 @@ public class MyCalendar {
 
 
     public static  String getData() {
-
         return Data;
     }
 

@@ -8,29 +8,26 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.DateTime;
 import com.google.api.client.util.store.FileDataStoreFactory;
-import com.google.api.services.sheets.v4.Sheets;
-import com.google.api.services.sheets.v4.SheetsScopes;
-import com.google.api.services.sheets.v4.model.Sheet;
-import com.google.api.services.sheets.v4.model.ValueRange;
-
+import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.CalendarScopes;
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.Events;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
-import java.sql.SQLOutput;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
-public class SheetsQuickstart {
-
-
-    private static final String APPLICATION_NAME = "Google Sheets API Java Quickstart";
+public class CalendarQuickstart {
+    private static final String APPLICATION_NAME = "Google Calendar API Java Quickstart";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
 
@@ -38,8 +35,11 @@ public class SheetsQuickstart {
      * Global instance of the scopes required by this quickstart.
      * If modifying these scopes, delete your previously saved tokens/ folder.
      */
-    private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS_READONLY);
+    private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR_READONLY);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
+    private static Date nowDate=new Date();
+    private static long timeInDay=nowDate.getHours()*3600000+nowDate.getMinutes()*60000+nowDate.getSeconds()*1000;
+    private  static long WeeksInMills=604800000-timeInDay;
 
     /**
      * Creates an authorized Credential object.
@@ -49,7 +49,7 @@ public class SheetsQuickstart {
      */
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
         // Load client secrets.
-        InputStream in = SheetsQuickstart.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+        InputStream in = CalendarQuickstart.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         if (in == null) {
             throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
         }
@@ -66,73 +66,90 @@ public class SheetsQuickstart {
     }
 
 
-    public static String printTable(String day) throws IOException, GeneralSecurityException {
+    public static String printTable(String day) throws GeneralSecurityException, IOException {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        final String spreadsheetId = "11PT2V9ZAD7UM-SRxnT2m3z22iMwqVYg19dQPb7TMF6I";
-        final String range = "Class Data";
-
-
-
-        Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+        Calendar service = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
-        ValueRange response = service.spreadsheets().values()
-                .get(spreadsheetId, range)
+        DateTime now = new DateTime(System.currentTimeMillis());
+        DateTime old=new DateTime(System.currentTimeMillis()+WeeksInMills);
+        Events events = service.events().list("primary")
+                .setTimeMax(old)
+                .setTimeMin(now)
+                .setOrderBy("startTime")
+                .setSingleEvents(true)
                 .execute();
-        List<List<Object>> values = response.getValues();
-        values.remove(0);
-
+        List<Event> items = events.getItems();
 
         String result=new String();
-        Calendar c = Calendar.getInstance();
-        Calendar temp=  Calendar.getInstance();
+        java.util.Calendar c = java.util.Calendar.getInstance();
+        java.util.Calendar temp=  java.util.Calendar.getInstance();
+        int statusDay=0;
         switch(day){
             case "Понедельник":
-                c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.MONDAY);
                 if(temp.after(c)) {
-                    c.add(Calendar.DATE,7);
+                    c.add(java.util.Calendar.DATE,7);
                 }
+                statusDay=1;
                 break;
             case "Вторник":
-                c.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
+                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.TUESDAY);
                 if(temp.after(c))
-                    c.add(Calendar.DATE,7);
+                    c.add(java.util.Calendar.DATE,7);
+                statusDay=2;
                 break;
             case "Среда":
-                c.set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY);
+                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.WEDNESDAY);
                 if(temp.after(c))
-                    c.add(Calendar.DATE,7);
+                    c.add(java.util.Calendar.DATE,7);
+                statusDay=3;
                 break;
             case "Четверг":
-                c.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY);
+                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.THURSDAY);
                 if(temp.after(c))
-                    c.add(Calendar.DATE,7);
+                    c.add(java.util.Calendar.DATE,7);
+                statusDay=4;
                 break;
             case "Пятница":
-                c.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.FRIDAY);
                 if(temp.after(c))
-                    c.add(Calendar.DATE,7);
+                    c.add(java.util.Calendar.DATE,7);
+                statusDay=5;
 
                 break;
             case "Суббота":
-                c.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.SATURDAY);
                 if(temp.after(c))
-                    c.add(Calendar.DATE,7);
+                    c.add(java.util.Calendar.DATE,7);
+                statusDay=6;
                 break;
             case "Воскресенье":
-                c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.SUNDAY);
                 if(temp.after(c))
-                    c.add(Calendar.DATE,7);
+                    c.add(java.util.Calendar.DATE,7);
+                statusDay=0;
                 break;
 
         }
         result="_"+new SimpleDateFormat("d MMMM yyyy").format(c.getTime())+"_"+"\n\n";
-        if (values == null || values.isEmpty()) {
-            System.out.println("No data found.");
+        if (items.isEmpty()) {
+            System.out.println("No upcoming events found.");
         } else {
-            for (List row : values) {
-                if(row.get(0).equals(day)){
-                    result += "* Имя:*" +row.get(2).toString() + "\t *Время:*" + row.get(1).toString() + "\t *Локация:*" + row.get(3).toString() + "\n\n";
+            for (Event event : items) {
+                DateTime start = event.getStart().getDateTime();
+                Date date=new Date(start.getValue());
+                java.util.Calendar calendar= new GregorianCalendar();
+                calendar.setTime(date);
+                if (start == null) {
+                    start = event.getStart().getDate();
+                }
+
+                if(date.getDay()==statusDay){
+                    if(date.getMinutes()<10)
+                        result += "* Имя:*" +event.getSummary() + "\t *Время:*" + date.getHours()+":0"+date.getMinutes()  + "\n\n";
+                    else
+                        result += "* Имя:*" +event.getSummary() + "\t *Время:*" + date.getHours()+":"+date.getMinutes()  + "\n\n";
                 }
             }
         }
