@@ -21,10 +21,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 public class CalendarQuickstart {
     private static final String APPLICATION_NAME = "Google Calendar API Java Quickstart";
@@ -83,6 +80,7 @@ public class CalendarQuickstart {
 
         String result=new String();
         java.util.Calendar c = java.util.Calendar.getInstance();
+        c.setTimeZone(TimeZone.getTimeZone("Europe/Moscow"));
         java.util.Calendar temp=  java.util.Calendar.getInstance();
         int statusDay=0;
         switch(day){
@@ -132,6 +130,7 @@ public class CalendarQuickstart {
                 break;
 
         }
+
         result="_"+new SimpleDateFormat("d MMMM yyyy").format(c.getTime())+"_"+"\n\n";
         if (items.isEmpty()) {
             System.out.println("No upcoming events found.");
