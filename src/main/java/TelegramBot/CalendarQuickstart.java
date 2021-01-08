@@ -66,6 +66,7 @@ public class CalendarQuickstart {
 
     public static String printTable(String day) throws GeneralSecurityException, IOException {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));
         Calendar service = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
@@ -132,8 +133,8 @@ public class CalendarQuickstart {
                 break;
 
         }
-        result="_"+new SimpleDateFormat("d MMMM yyyy").format(c.getTime())+"_"+"\n\n";
-        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));
+        result="_"+new SimpleDateFormat("d MMMM yyyy",new Locale("ru")).format(c.getTime())+"_"+"\n\n";
+
 
         if (items.isEmpty()) {
             System.out.println("No upcoming events found.");
