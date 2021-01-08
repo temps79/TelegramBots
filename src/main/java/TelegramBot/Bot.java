@@ -4,12 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.methods.updates.GetUpdates;
 import org.telegram.telegrambots.api.objects.*;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -17,18 +14,11 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import static TelegramBot.CalendarQuickstart.printTable;
-import static TelegramBot.MyCalendar.getData;
 import static TelegramBot.SelectedWeeks.selected;
-
 
 
 
@@ -76,10 +66,6 @@ public class Bot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         Message message=update.getMessage();
 
-        MyCalendar calendar = new MyCalendar();
-
-
-
         if(update.hasMessage()) {
             if ((message.hasText() && status == 0) || (message.getText().equals("/start"))) {
                 sendMsg(message, "*Выберите действие*");
@@ -95,16 +81,12 @@ public class Bot extends TelegramLongPollingBot {
                 try {
                     sendMsgWeeks(message, printTable(selected(message)));
                     execute(sendInlineKeyBoardMessage(update.getMessage().getChatId()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (GeneralSecurityException e) {
-                    e.printStackTrace();
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+
                 }
                 status = 2;
             } else if (message.hasText() && status == 2) {
-                sendMsgWeeks(message, "Сегодня " + getData() + "\nВыберите день:");
+                sendMsgWeeks(message, "Сегодня " + CalendarQuickstart.getData() + "\nВыберите день:");
                 status = 2;
             }else if(message.hasText()&&status==3){
                 Person.setName(message.getText());
@@ -118,7 +100,7 @@ public class Bot extends TelegramLongPollingBot {
                 Person.setNumber(message.getText());
                 sendMsg(message,"Ваша заявка поступила в модерацию\nВ ближайщее время с вами свяжуться\nДля продолжения введите/нажмите [/start]");
                 Chat chat=message.getChat();
-                sendInfo(message,Person.getName()+" "+Person.getDate()+" "+Person.getNumber()+"|"+chat.getFirstName()+" "+chat.getLastName());
+                sendInfo(Person.getName()+" "+Person.getDate()+" "+Person.getNumber()+"|"+chat.getFirstName()+" "+chat.getLastName());
                 status=1;
             }
 
@@ -129,7 +111,7 @@ public class Bot extends TelegramLongPollingBot {
                         .setChatId(update.getCallbackQuery().getMessage().getChatId()));
                 status=3;
             } catch (TelegramApiException e) {
-                e.printStackTrace();
+
             }
         }
 
@@ -141,22 +123,18 @@ public class Bot extends TelegramLongPollingBot {
         try {
             sendMessage(sendMessage);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+
         }
     }
-    void sendInfo(Message message,String text){
-
+    void sendInfo(String text){
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(ADMIN_CHAT_ID);
-
         sendMessage.setText(text);
         System.out.println(text);
-
-
         try {
             sendMessage(sendMessage);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+
         }
     }
 
@@ -199,8 +177,6 @@ public class Bot extends TelegramLongPollingBot {
 
         keyboardSecondRow.add("Обо мне \uD83E\uDD16");
 
-
-
         // Добавляем все строчки клавиатуры в список
         keyboard.add(keyboardFirstRow);
         keyboard.add(keyboardSecondRow);
@@ -222,8 +198,6 @@ public class Bot extends TelegramLongPollingBot {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
-        MyCalendar calendar = new MyCalendar();
-
         // Создаем клавиуатуру
 
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
@@ -238,7 +212,7 @@ public class Bot extends TelegramLongPollingBot {
         // Первая строчка клавиатуры
         KeyboardRow keyboardFirstRow = new KeyboardRow();
         // Добавляем кнопки в первую строчку клавиатуры
-        keyboardFirstRow.add("" + getData());
+        keyboardFirstRow.add("" + CalendarQuickstart.getData());
 
         // Вторая строчка клавиатуры
         KeyboardRow keyboardSecondRow = new KeyboardRow();
