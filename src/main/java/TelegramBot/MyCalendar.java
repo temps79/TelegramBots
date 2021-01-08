@@ -3,6 +3,7 @@ package TelegramBot;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 public class MyCalendar {
     private Calendar date;
@@ -11,7 +12,7 @@ public class MyCalendar {
     MyCalendar(){
         GregorianCalendar date= (GregorianCalendar) GregorianCalendar.getInstance();
         date.setFirstDayOfWeek(Calendar.MONDAY);
-        Data=new SimpleDateFormat("d MMMM yyyy").format(date.getTime());
+        Data=new SimpleDateFormat("d MMMM yyyy",new Locale("ru")).format(date.getTime());
     }
 
 
