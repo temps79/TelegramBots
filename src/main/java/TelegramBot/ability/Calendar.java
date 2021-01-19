@@ -43,6 +43,7 @@ public class Calendar{
     //Формат даты
     private static final SimpleDateFormat simpleDateFormat=new SimpleDateFormat("d MMMM yyyy",new Locale("ru"));
     public static String  getData(){
+        System.out.println();
         return simpleDateFormat.format(nowDate);
     }
 

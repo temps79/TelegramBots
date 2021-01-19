@@ -19,7 +19,6 @@ import java.util.*;
 
 
 public class defaultHandler extends HadlerAbstract {
-    final private static SimpleDateFormat date=new SimpleDateFormat("d MMMM yyyy");
     private static int status=0;
     public defaultHandler(Bot bot) {
         super(bot);
@@ -29,7 +28,7 @@ public class defaultHandler extends HadlerAbstract {
     private final String entryDay="Выберите день:";
     private final String infoMe="Обо мне \uD83E\uDD16";
     private final String calendar="Календарь \uD83D\uDCC5";
-    private final String today="Сегодня " + date.format(new Date()) + "\nВыберите день:";
+    private final String today="Сегодня " + Calendar.getData() + "\nВыберите день:";
     private final String selectedTime="Желаемый день/время:";
     private final String contactInfo="Ваши контакты для связи(Способ связи)?";
     private final String moderation="Ваша заявка поступила в модерацию\nВ ближайщее время с вами свяжуться\nДля продолжения введите/нажмите [/start]";
