@@ -1,160 +1,123 @@
-package TelegramBot;
+package src.handler;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.*;
+import org.telegram.telegrambots.api.objects.Message;
+import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
+import src.ability.Calendar;
+import src.model.Bot;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static TelegramBot.CalendarQuickstart.printTable;
-import static TelegramBot.SelectedWeeks.selected;
-
-
-
-
-public class Bot extends TelegramLongPollingBot {
-
-    int status=0;
-    @Setter
-    @Getter
-    String botName;
-    @Setter
-    @Getter
-    String token;
-
-    public Bot(String botName, String token) {
-        this.botName=botName;
-        this.token=token;
+public class defaultHandler extends HadlerAbstract {
+    final private static SimpleDateFormat date=new SimpleDateFormat("d MMMM yyyy");
+    private static int status=0;
+    public defaultHandler(Bot bot) {
+        super(bot);
     }
 
+    private final String entryAction="*Выберите действие*";
+    private final String entryDay="Выберите день:";
+    private final String infoMe="Обо мне \uD83E\uDD16";
+    private final String calendar="Календарь \uD83D\uDCC5";
+    private final String today="Сегодня " + date.format(new Date()) + "\nВыберите день:";
+    private final String selectedTime="Желаемый день/время:";
+    private final String contactInfo="Ваши контакты для связи(Способ связи)?";
+    private final String moderation="Ваша заявка поступила в модерацию\nВ ближайщее время с вами свяжуться\nДля продолжения введите/нажмите [/start]";
+    private  Map<String,String> dayOfWeeks= new HashMap<>();
+    {
+        dayOfWeeks.put("ПН","Понедельник");
+        dayOfWeeks.put("ВТ","Вторник");
+        dayOfWeeks.put("СР","Cреда");
+        dayOfWeeks.put("ЧТ","Четверг");
+        dayOfWeeks.put("ПТ","Пятница");
+        dayOfWeeks.put("СБ","Суббота");
+        dayOfWeeks.put("ВС","Воскресенье");
+    }
 
     @Override
-    public String getBotUsername() {
-        return botName;
-    }
-
-    @Override
-    public String getBotToken() {
-        return token;
-    }
-
-    public void botConnect() {
-        TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
-        try {
-            telegramBotsApi.registerBot(this);
-
-        } catch (TelegramApiRequestException e) {
-            botConnect();
-        }
-    }
-    private final static long ADMIN_CHAT_ID=491099045;
-
-
-
-    @Override
-    public void onUpdateReceived(Update update) {
+    public void operator(Update update) throws TelegramApiException, GeneralSecurityException, IOException {
         Message message=update.getMessage();
-
         if(update.hasMessage()) {
             if ((message.hasText() && status == 0) || (message.getText().equals("/start"))) {
-                sendMsg(message, "*Выберите действие*");
-                System.out.println(update.getMessage().getChatId());
+                sendMsg(message, entryAction);
                 status = 1;
-            } else if (message.getText().equals("Календарь \uD83D\uDCC5") && status == 1) {
-                sendMsgWeeks(message, "Выберите день:");
+            } else if (message.getText().equals(calendar) && status == 1) {
+                sendMsgWeeks(message, entryDay);
                 status = 2;
-            } else if (message.getText().equals("Обо мне \uD83E\uDD16") && status == 1) {
+            } else if (message.getText().equals(infoMe) && status == 1) {
                 ReferenceURL(update);
                 status = 1;
-            } else if (message.getText().equals("ПН") || message.getText().equals("ВТ") || message.getText().equals("СР") || message.getText().equals("ЧТ") || message.getText().equals("ПТ") || message.getText().equals("СБ") || message.getText().equals("ВС") && status == 2) {
-                try {
-                    sendMsgWeeks(message, printTable(selected(message)));
-                    execute(sendInlineKeyBoardMessage(update.getMessage().getChatId()));
-                } catch (Exception e) {
-
-                }
+            } else if (dayOfWeeks.containsKey(message.getText())&& status == 2) {
+                sendMsgWeeks(message, Calendar.printTable(dayOfWeeks.get(message.getText())));
+                bot.execute(sendInlineKeyBoardMessage(update.getMessage().getChatId()));
                 status = 2;
             } else if (message.hasText() && status == 2) {
-                sendMsgWeeks(message, "Сегодня " + CalendarQuickstart.getData() + "\nВыберите день:");
+                sendMsgWeeks(message, today);
                 status = 2;
             }else if(message.hasText()&&status==3){
-                Person.setName(message.getText());
-                sendMessageTxt(message,"Желаемый день/время:");
+                bot.sendSystemQueue.add(String.format("TelegramName:%s|%s\n",message.getChat().getFirstName(),message.getChat().getLastName()));
+                bot.sendSystemQueue.add(message.getText());
+                sendMessageTxt(message,selectedTime);
                 status=4;
             }else if(message.hasText()&&status==4){
-                Person.setDate(message.getText());
-                sendMessageTxt(message,"Ваши контакты для связи(Способ связи)?");
+                bot.sendSystemQueue.add(message.getText());
+                sendMessageTxt(message,contactInfo);
                 status=5;
             }else if(message.hasText()&&status==5){
-                Person.setNumber(message.getText());
-                sendMsg(message,"Ваша заявка поступила в модерацию\nВ ближайщее время с вами свяжуться\nДля продолжения введите/нажмите [/start]");
-                Chat chat=message.getChat();
-                sendInfo(Person.getName()+" "+Person.getDate()+" "+Person.getNumber()+"|"+chat.getFirstName()+" "+chat.getLastName());
+                bot.sendSystemQueue.add(message.getText());
+                sendMsg(message,moderation);
                 status=1;
             }
 
         }else if(update.hasCallbackQuery()){
-            try {
-                execute(new SendMessage().setText(
+                bot.execute(new SendMessage().setText(
                         "Как вас зовут?")
                         .setChatId(update.getCallbackQuery().getMessage().getChatId()));
                 status=3;
-            } catch (TelegramApiException e) {
 
-            }
+
         }
-
     }
-    void sendMessageTxt(Message message,String text){
+    private void sendMessageTxt(Message message, String text){
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChatId().toString());
         sendMessage.setText(text);
         try {
-            sendMessage(sendMessage);
+            bot.sendMessage(sendMessage);
         } catch (TelegramApiException e) {
-
+            e.printStackTrace();
         }
-    }
-    void sendInfo(String text){
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(ADMIN_CHAT_ID);
-        sendMessage.setText(text);
-        System.out.println(text);
-        try {
-            sendMessage(sendMessage);
-        } catch (TelegramApiException e) {
 
-        }
     }
 
-    public void ReferenceURL(Update update){
+
+
+    private void ReferenceURL(Update update){
         SendMessage sendMessage=new SendMessage().setChatId(update.getMessage().getChatId()).setText("Обо мне \uD83E\uDD16 \n Селезнев Сергей Александрович \nРепетитор по информатике/программированию и математике \nЭтот бот позволяет узнать мое расписание занятий\n @temps799");
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
-        List < List < InlineKeyboardButton >> rowsInline = new ArrayList < > ();
+        List <List<InlineKeyboardButton>> rowsInline = new ArrayList< >();
         List < InlineKeyboardButton > rowInline = new ArrayList < > ();
         rowInline.add(new InlineKeyboardButton().setText("Ссылка на профиль").setUrl("https://repetit.ru/repetitor.aspx?id=148297"));
         rowsInline.add(rowInline);
         markupInline.setKeyboard(rowsInline);
         sendMessage.setReplyMarkup(markupInline);
         try {
-            execute(sendMessage); // Sending our message object to user
+            bot.sendMessage(sendMessage); // Sending our message object to user
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }
 
-    public void sendMsg (Message message, String text) {
+    private void sendMsg (Message message, String text) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
@@ -177,6 +140,8 @@ public class Bot extends TelegramLongPollingBot {
 
         keyboardSecondRow.add("Обо мне \uD83E\uDD16");
 
+
+
         // Добавляем все строчки клавиатуры в список
         keyboard.add(keyboardFirstRow);
         keyboard.add(keyboardSecondRow);
@@ -188,16 +153,15 @@ public class Bot extends TelegramLongPollingBot {
 
         sendMessage.setText(text);
         try {
-            sendMessage(sendMessage);
+            bot.sendMessage(sendMessage);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }
 
-    public void sendMsgWeeks(Message message, String text) {
+    private void sendMsgWeeks(Message message, String text) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
-
         // Создаем клавиуатуру
 
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
@@ -212,7 +176,7 @@ public class Bot extends TelegramLongPollingBot {
         // Первая строчка клавиатуры
         KeyboardRow keyboardFirstRow = new KeyboardRow();
         // Добавляем кнопки в первую строчку клавиатуры
-        keyboardFirstRow.add("" + CalendarQuickstart.getData());
+        keyboardFirstRow.add("" + date.format(new Date()));
 
         // Вторая строчка клавиатуры
         KeyboardRow keyboardSecondRow = new KeyboardRow();
@@ -232,7 +196,7 @@ public class Bot extends TelegramLongPollingBot {
 
         sendMessage.setText(text);
         try {
-            sendMessage(sendMessage);
+            bot.sendMessage(sendMessage);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
@@ -240,7 +204,7 @@ public class Bot extends TelegramLongPollingBot {
 
     }
 
-    public static SendMessage sendInlineKeyBoardMessage(long chatId) {
+    private static SendMessage sendInlineKeyBoardMessage(long chatId) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
 
@@ -260,5 +224,4 @@ public class Bot extends TelegramLongPollingBot {
         return new SendMessage().setChatId(chatId).setText("Нажмите кнопку \"Записаться\" и заполните форму").setReplyMarkup(inlineKeyboardMarkup);
 
     }
-
 }
