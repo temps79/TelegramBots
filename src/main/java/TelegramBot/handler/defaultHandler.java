@@ -177,7 +177,7 @@ public class defaultHandler extends HadlerAbstract {
         // Первая строчка клавиатуры
         KeyboardRow keyboardFirstRow = new KeyboardRow();
         // Добавляем кнопки в первую строчку клавиатуры
-        keyboardFirstRow.add("" + date.format(new Date()));
+        keyboardFirstRow.add("" + Calendar.getData());
 
         // Вторая строчка клавиатуры
         KeyboardRow keyboardSecondRow = new KeyboardRow();
