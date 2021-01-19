@@ -37,7 +37,7 @@ public class defaultHandler extends HadlerAbstract {
     {
         dayOfWeeks.put("ПН","Понедельник");
         dayOfWeeks.put("ВТ","Вторник");
-        dayOfWeeks.put("СР","Cреда");
+        dayOfWeeks.put("СР","Среда");
         dayOfWeeks.put("ЧТ","Четверг");
         dayOfWeeks.put("ПТ","Пятница");
         dayOfWeeks.put("СБ","Суббота");

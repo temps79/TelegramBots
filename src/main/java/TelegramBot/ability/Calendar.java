@@ -22,10 +22,11 @@ import java.security.GeneralSecurityException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class Calendar {
+public class Calendar{
     private static final String APPLICATION_NAME = "Calendar";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
+
 
     /**
      * Global instance of the scopes required by this quickstart.
@@ -33,11 +34,29 @@ public class Calendar {
      */
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR_READONLY);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
+    //Текущая дата
     private static Date nowDate=new Date();
+    // Время в дне(миллесек)
     private static long timeInDay=nowDate.getHours()*3600000+nowDate.getMinutes()*60000+nowDate.getSeconds()*1000;
+    //Миллисекунд в неделе не включая один день
     private  static long WeeksInMills=604800000-timeInDay;
-    
+    //Формат даты
+    private static final SimpleDateFormat simpleDateFormat=new SimpleDateFormat("d MMMM yyyy",new Locale("ru"));
+    public static String  getData(){
+        return simpleDateFormat.format(nowDate);
+    }
 
+    private static Map<String,Integer> selectedWeeks=new HashMap<>();
+    static
+    {
+        selectedWeeks.put("Понедельник",1);
+        selectedWeeks.put("Вторник",2);
+        selectedWeeks.put("Среда",3);
+        selectedWeeks.put("Четверг",4);
+        selectedWeeks.put("Пятница",5);
+        selectedWeeks.put("Суббота",6);
+        selectedWeeks.put("Воскресенье",0);
+    }
     /**
      * Creates an authorized Credential object.
      * @param HTTP_TRANSPORT The network HTTP Transport.
@@ -62,14 +81,18 @@ public class Calendar {
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-
+    // Печать расписания
     public static String printTable(String day) throws GeneralSecurityException, IOException {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));
         com.google.api.services.calendar.Calendar service = new com.google.api.services.calendar.Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
-        DateTime now = new DateTime(System.currentTimeMillis());
+        // Вычисление начала текущего дня
+        DateTime now = new DateTime(System.currentTimeMillis()-timeInDay);
+        // Вычисление недели до текущего дня(не включая)
         DateTime old=new DateTime(System.currentTimeMillis()+WeeksInMills);
+        // Получение событий из календаря с текущего дня(00:00) по следующую неделю
         Events events = service.events().list("primary")
                 .setTimeMax(old)
                 .setTimeMin(now)
@@ -77,82 +100,62 @@ public class Calendar {
                 .setSingleEvents(true)
                 .execute();
         List<Event> items = events.getItems();
-
+        //результирующая строка
         String result=new String();
-        java.util.Calendar c = java.util.Calendar.getInstance();
-        java.util.Calendar temp=  java.util.Calendar.getInstance();
-        int statusDay=0;
-        switch(day){
-            case "Понедельник":
-                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.MONDAY);
-                if(temp.after(c)) {
-                    c.add(java.util.Calendar.DATE,7);
-                }
-                statusDay=1;
-                break;
-            case "Вторник":
-                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.TUESDAY);
-                if(temp.after(c))
-                    c.add(java.util.Calendar.DATE,7);
-                statusDay=2;
-                break;
-            case "Среда":
-                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.WEDNESDAY);
-                if(temp.after(c))
-                    c.add(java.util.Calendar.DATE,7);
-                statusDay=3;
-                break;
-            case "Четверг":
-                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.THURSDAY);
-                if(temp.after(c))
-                    c.add(java.util.Calendar.DATE,7);
-                statusDay=4;
-                break;
-            case "Пятница":
-                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.FRIDAY);
-                if(temp.after(c))
-                    c.add(java.util.Calendar.DATE,7);
-                statusDay=5;
+        //Определения дня в зависисмсоти от недели
+        int statusDay=selectedWeeks.get(day);
 
-                break;
-            case "Суббота":
-                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.SATURDAY);
-                if(temp.after(c))
-                    c.add(java.util.Calendar.DATE,7);
-                statusDay=6;
-                break;
-            case "Воскресенье":
-                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.SUNDAY);
-                if(temp.after(c))
-                    c.add(java.util.Calendar.DATE,7);
-                statusDay=0;
-                break;
-
-        }
-        result="_"+new SimpleDateFormat("d MMMM yyyy").format(c.getTime())+"_"+"\n\n";
+        result="_"+simpleDateFormat.format(getPrivateCalendar(statusDay).getTime())+"_"+"\n\n";
+        //Определение событий подоходящих под выбранный день
         if (items.isEmpty()) {
-            System.out.println("No upcoming events found.");
+
         } else {
             for (Event event : items) {
                 DateTime start = event.getStart().getDateTime();
                 Date date=new Date(start.getValue());
-                java.util.Calendar calendar= new GregorianCalendar();
-                calendar.setTime(date);
-                if (start == null) {
+                if (start == null)
                     start = event.getStart().getDate();
-                }
-
-                if(date.getDay()==statusDay){
+                if(date.getDay()==statusDay)
                     if(date.getMinutes()<10)
                         result += "* Имя:*" +event.getSummary() + "\t *Время:*" + date.getHours()+":0"+date.getMinutes()  + "\n\n";
                     else
                         result += "* Имя:*" +event.getSummary() + "\t *Время:*" + date.getHours()+":"+date.getMinutes()  + "\n\n";
-                }
             }
         }
         if(!result.contains("* Имя:*")){
             result +="*Выходной*";
         }
         return result;
+    }
+
+    private static java.util.Calendar getPrivateCalendar(int statusDay) {
+        java.util.Calendar temp= java.util.Calendar.getInstance();
+        java.util.Calendar c=java.util.Calendar.getInstance();
+        switch(statusDay){
+            case 1:
+                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.MONDAY);
+                break;
+            case 2:
+                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.TUESDAY);
+                break;
+            case 3:
+                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.WEDNESDAY);
+                break;
+            case 4:
+                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.THURSDAY);
+                break;
+            case 5:
+                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.FRIDAY);
+                break;
+            case 6:
+                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.SATURDAY);
+                break;
+            case 0:
+                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.SUNDAY);
+                break;
+        }
+        if(temp.after(c))
+            c.add(java.util.Calendar.DATE,7);
+        return c;
     }
 }
