@@ -18,13 +18,13 @@ public class Application {
         telegram_bot.botConnect();
 
 
-        MessageReciever messageReciever=new MessageReciever(telegram_bot);
+        /*MessageReciever messageReciever=new MessageReciever(telegram_bot);
         Thread threadRecievr=new Thread(messageReciever);
         threadRecievr.start();
 
         MessageSender messageSender=new MessageSender(telegram_bot);
         Thread threadSender=new Thread(messageSender);
-        threadSender.start();
+        threadSender.start();*/
 
 
 
