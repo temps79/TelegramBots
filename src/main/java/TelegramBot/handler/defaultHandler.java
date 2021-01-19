@@ -1,5 +1,6 @@
-package src.handler;
+package TelegramBot.handler;
 
+import TelegramBot.model.Bot;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
@@ -8,8 +9,8 @@ import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import src.ability.Calendar;
-import src.model.Bot;
+import TelegramBot.ability.Calendar;
+
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;

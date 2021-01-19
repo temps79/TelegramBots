@@ -1,9 +1,9 @@
-package src.service;
+package TelegramBot.service;
 
 
+import TelegramBot.model.Bot;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import src.model.Bot;
 
 
 

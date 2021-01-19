@@ -1,8 +1,9 @@
-package src.handler;
+package TelegramBot.handler;
 
+import TelegramBot.model.Bot;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import src.model.Bot;
+
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;

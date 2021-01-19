@@ -1,4 +1,4 @@
-package src.model;
+package TelegramBot.model;
 
 import lombok.Getter;
 import lombok.Setter;

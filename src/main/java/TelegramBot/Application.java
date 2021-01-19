@@ -1,10 +1,12 @@
-package src;
+package TelegramBot;
 
 
+import TelegramBot.model.Bot;
+import TelegramBot.service.MessageReciever;
+import TelegramBot.service.MessageSender;
 import org.telegram.telegrambots.ApiContextInitializer;
-import src.model.Bot;
-import src.service.MessageReciever;
-import src.service.MessageSender;
+
+
 
 public class Application {
 
@@ -18,13 +20,13 @@ public class Application {
         telegram_bot.botConnect();
 
 
-        /*MessageReciever messageReciever=new MessageReciever(telegram_bot);
+        MessageReciever messageReciever=new MessageReciever(telegram_bot);
         Thread threadRecievr=new Thread(messageReciever);
         threadRecievr.start();
 
         MessageSender messageSender=new MessageSender(telegram_bot);
         Thread threadSender=new Thread(messageSender);
-        threadSender.start();*/
+        threadSender.start();
 
 
 
