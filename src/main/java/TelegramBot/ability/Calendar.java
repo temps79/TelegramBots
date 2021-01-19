@@ -27,7 +27,7 @@ public class Calendar{
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
 
-
+    static TimeZone tz=TimeZone.getTimeZone("Europe/Moscow");
     /**
      * Global instance of the scopes required by this quickstart.
      * If modifying these scopes, delete your previously saved tokens/ folder.
@@ -105,7 +105,6 @@ public class Calendar{
         String result=new String();
         //Определения дня в зависисмсоти от недели
         int statusDay=selectedWeeks.get(day);
-        System.out.println(statusDay);
         result="_"+simpleDateFormat.format(getPrivateCalendar(statusDay).getTime())+"_"+"\n\n";
         //Определение событий подоходящих под выбранный день
         if (items.isEmpty()) {
@@ -132,8 +131,9 @@ public class Calendar{
     }
 
     private static java.util.Calendar getPrivateCalendar(int statusDay) {
-        java.util.Calendar temp= java.util.Calendar.getInstance();
-        java.util.Calendar c=java.util.Calendar.getInstance();
+        java.util.Calendar temp= java.util.Calendar.getInstance(tz);
+        java.util.Calendar c=java.util.Calendar.getInstance(tz);
+
         switch(statusDay){
             case 1:
                 c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.MONDAY);
@@ -157,8 +157,10 @@ public class Calendar{
                 c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.SUNDAY);
                 break;
         }
+
         if(temp.after(c))
             c.add(java.util.Calendar.DATE,7);
+
         return c;
     }
 }
