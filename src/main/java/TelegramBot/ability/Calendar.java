@@ -105,7 +105,7 @@ public class Calendar{
         String result=new String();
         //Определения дня в зависисмсоти от недели
         int statusDay=selectedWeeks.get(day);
-
+        System.out.println(statusDay);
         result="_"+simpleDateFormat.format(getPrivateCalendar(statusDay).getTime())+"_"+"\n\n";
         //Определение событий подоходящих под выбранный день
         if (items.isEmpty()) {
@@ -114,6 +114,8 @@ public class Calendar{
             for (Event event : items) {
                 DateTime start = event.getStart().getDateTime();
                 Date date=new Date(start.getValue());
+                java.util.Calendar calendar= new GregorianCalendar();
+                calendar.setTime(date);
                 if (start == null)
                     start = event.getStart().getDate();
                 if(date.getDay()==statusDay)
