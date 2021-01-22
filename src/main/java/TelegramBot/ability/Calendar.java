@@ -82,6 +82,10 @@ public class Calendar{
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
+//    public static void main(String[] args) throws GeneralSecurityException, IOException {
+//        System.out.println(printTable("Воскресенье"));
+//    }
+
     // Печать расписания
     public static String printTable(String day) throws GeneralSecurityException, IOException {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -113,15 +117,19 @@ public class Calendar{
             for (Event event : items) {
                 DateTime start = event.getStart().getDateTime();
                 Date date=new Date(start.getValue());
-                java.util.Calendar calendar= new GregorianCalendar();
-                calendar.setTime(date);
+//                java.util.Calendar calendar= new GregorianCalendar();
+//                calendar.setTime(date);
                 if (start == null)
                     start = event.getStart().getDate();
-                if(date.getDay()==statusDay)
-                    if(date.getMinutes()<10)
-                        result += "* Имя:*" +event.getSummary() + "\t *Время:*" + date.getHours()+":0"+date.getMinutes()  + "\n\n";
+                if(date.getDay()==statusDay) {
+                    String localText="";
+                    if(event.getLocation()!=null)
+                        localText="```";
+                    if (date.getMinutes() < 10)
+                        result += "* Имя:*"  + localText+event.getSummary()+localText + "\t *Время:*" + date.getHours() + ":0" + date.getMinutes() + "\n\n";
                     else
-                        result += "* Имя:*" +event.getSummary() + "\t *Время:*" + date.getHours()+":"+date.getMinutes()  + "\n\n";
+                        result += "* Имя:*" + localText+event.getSummary()+localText + "\t *Время:*" + date.getHours() + ":" + date.getMinutes() + "\n\n";
+                }
             }
         }
         if(!result.contains("* Имя:*")){
