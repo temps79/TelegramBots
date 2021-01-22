@@ -82,9 +82,9 @@ public class Calendar{
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-//    public static void main(String[] args) throws GeneralSecurityException, IOException {
-//        System.out.println(printTable("Воскресенье"));
-//    }
+    public static void main(String[] args) throws GeneralSecurityException, IOException {
+        System.out.println(printTable("Суббота"));
+    }
 
     // Печать расписания
     public static String printTable(String day) throws GeneralSecurityException, IOException {
@@ -111,20 +111,14 @@ public class Calendar{
         int statusDay=selectedWeeks.get(day);
         result="_"+simpleDateFormat.format(getPrivateCalendar(statusDay).getTime())+"_"+"\n\n";
         //Определение событий подоходящих под выбранный день
-        if (items.isEmpty()) {
-
-        } else {
+        if (!items.isEmpty())  {
             for (Event event : items) {
                 DateTime start = event.getStart().getDateTime();
                 Date date=new Date(start.getValue());
-//                java.util.Calendar calendar= new GregorianCalendar();
-//                calendar.setTime(date);
-                if (start == null)
-                    start = event.getStart().getDate();
                 if(date.getDay()==statusDay) {
                     String localText="";
                     if(event.getLocation()!=null)
-                        localText="```";
+                        localText="`";
                     if (date.getMinutes() < 10)
                         result += "* Имя:*"  + localText+event.getSummary()+localText + "\t *Время:*" + date.getHours() + ":0" + date.getMinutes() + "\n\n";
                     else
