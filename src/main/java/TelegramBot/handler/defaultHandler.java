@@ -18,6 +18,9 @@ import java.security.GeneralSecurityException;
 
 import java.util.*;
 
+import static TelegramBot.handler.Action.getKeyboard;
+import static TelegramBot.handler.Action.showReplyKeyboardMarkup;
+
 
 public class defaultHandler extends HadlerAbstract {
     private static int status=0;
@@ -122,36 +125,9 @@ public class defaultHandler extends HadlerAbstract {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
-        // Создаем клавиуатуру
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        sendMessage.setReplyMarkup(replyKeyboardMarkup);
-        replyKeyboardMarkup.setSelective(true);
-        replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboard(true);
-
-        // Создаем список строк клавиатуры
-        List<KeyboardRow> keyboard = new ArrayList<>();
-
-        // Первая строчка клавиатуры
-        KeyboardRow keyboardFirstRow = new KeyboardRow();
-        // Добавляем кнопки в первую строчку клавиатуры
-        keyboardFirstRow.add("Календарь \uD83D\uDCC5");
-
-        KeyboardRow keyboardSecondRow = new KeyboardRow();
-
-        keyboardSecondRow.add("Обо мне \uD83E\uDD16");
-
-
-
-        // Добавляем все строчки клавиатуры в список
-        keyboard.add(keyboardFirstRow);
-        keyboard.add(keyboardSecondRow);
-
-        // и устанваливаем этот список нашей клавиатуре
-        replyKeyboardMarkup.setKeyboard(keyboard);
+        sendMessage.setReplyMarkup(showReplyKeyboardMarkup(getKeyboard("Календарь \uD83D\uDCC5","\n","Обо мне \uD83E\uDD16")));
 
         sendMessage.setChatId(message.getChatId().toString());
-
         sendMessage.setText(text);
         try {
             bot.sendMessage(sendMessage);
@@ -163,38 +139,10 @@ public class defaultHandler extends HadlerAbstract {
     private void sendMsgWeeks(Message message, String text) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
-        // Создаем клавиуатуру
 
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        sendMessage.setReplyMarkup(replyKeyboardMarkup);
-        replyKeyboardMarkup.setSelective(true);
-        replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboard(false);
-
-        // Создаем список строк клавиатуры
-        List<KeyboardRow> keyboard = new ArrayList<>();
-
-        // Первая строчка клавиатуры
-        KeyboardRow keyboardFirstRow = new KeyboardRow();
-        // Добавляем кнопки в первую строчку клавиатуры
-        keyboardFirstRow.add("" + Calendar.getData());
-
-        // Вторая строчка клавиатуры
-        KeyboardRow keyboardSecondRow = new KeyboardRow();
-        String[] Weeks = {"ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"};
-        for (int i = 0; i < 7; i++)
-            // Добавляем кнопки в первую строчку клавиатуры
-            keyboardSecondRow.add(Weeks[i]);
-
-        // Добавляем все строчки клавиатуры в список
-        keyboard.add(keyboardFirstRow);
-        keyboard.add(keyboardSecondRow);
-
-        // и устанваливаем этот список нашей клавиатуре
-        replyKeyboardMarkup.setKeyboard(keyboard);
+        sendMessage.setReplyMarkup(showReplyKeyboardMarkup(getKeyboard(Calendar.getData(),"\n","ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС")));
 
         sendMessage.setChatId(message.getChatId().toString());
-
         sendMessage.setText(text);
         try {
             bot.sendMessage(sendMessage);
@@ -215,8 +163,7 @@ public class defaultHandler extends HadlerAbstract {
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         keyboardButtonsRow1.add(inlineKeyboardButton1);
-
-
+        
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow1);
         rowList.add(keyboardButtonsRow2);
