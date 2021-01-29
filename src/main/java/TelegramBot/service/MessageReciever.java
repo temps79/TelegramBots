@@ -27,13 +27,13 @@ public class MessageReciever implements Runnable{
             for(Object object= bot.receiveQueue.poll();object!=null;object=bot.receiveQueue.poll()){
                 try {
                     checkUpdate(object);
-                } catch (TelegramApiException | GeneralSecurityException | IOException e) {
+                } catch (TelegramApiException | GeneralSecurityException | IOException | NoSuchFieldException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
             }
         }
     }
-    private void checkUpdate(Object object) throws TelegramApiException, GeneralSecurityException, IOException {
+    private void checkUpdate(Object object) throws TelegramApiException, GeneralSecurityException, IOException, NoSuchFieldException, IllegalAccessException {
         if(object instanceof Update){
             new defaultHandler(bot).operator((Update) object);
 
