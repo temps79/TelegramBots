@@ -32,33 +32,34 @@ public class defaultHandler extends HadlerAbstract {
         Message message=update.getMessage();
         if(update.hasMessage()) {
             if ((message.hasText() && status == 0) || (message.getText().equals("/start"))) {
-                bot.execute(sendMsg(message, entryAction));
+                bot.sendQueue.add(sendMsg(message,entryAction));
                 status = 1;
             } else if (message.getText().equals(calendar) && status == 1) {
-                bot.execute(sendMsgWeeks(message, entryDay));
+                bot.sendQueue.add(sendMsgWeeks(message,entryDay));
                 status = 2;
             } else if (message.getText().equals(infoMe) && status == 1) {
-                bot.execute(ReferenceURL(update));
+                bot.sendQueue.add(ReferenceURL(update));
                 status = 1;
             } else if (Weeks.contains(message.getText()) && status == 2) {
-                bot.execute(sendMsgWeeks(message, Calendar.printTable(message.getText())));
-                bot.execute(sendInlineKeyBoardMessage(update.getMessage().getChatId()));
+                bot.sendQueue.add(sendMsgWeeks(message,Calendar.printTable(message.getText())));
+                bot.sendQueue.add(sendInlineKeyBoardMessage(message.getChatId()));
                 status = 2;
             } else if (message.hasText() && status == 2) {
-                bot.execute(sendMsgWeeks(message, today));
+                bot.sendQueue.add(sendMsgWeeks(message,today));
                 status = 2;
             }else if(message.hasText()&&status==3){
-                bot.sendSystemQueue.add(String.format("TelegramName:%s|%s\n",message.getChat().getFirstName(),message.getChat().getLastName()));
-                bot.sendSystemQueue.add(message.getText());
-                bot.execute(sendMessageTxt(message,selectedTime));
+                bot.sendSystemQueue.add(String.format("TelegramName: %s | %s\nИмя:", message.getChat().getFirstName(),
+                        message.getChat().getLastName()==null?"":message.getChat().getLastName()));
+                bot.sendSystemQueue.add(message.getText()+"\nВремя:");
+                bot.sendQueue.add(sendMessageTxt(message,selectedTime));
                 status=4;
             }else if(message.hasText()&&status==4){
-                bot.sendSystemQueue.add(message.getText());
-                bot.execute(sendMessageTxt(message,contactInfo));
+                bot.sendSystemQueue.add(message.getText()+"\nКонтакты:");
+                bot.sendQueue.add(sendMessageTxt(message,contactInfo));
                 status=5;
             }else if(message.hasText()&&status==5){
                 bot.sendSystemQueue.add(message.getText());
-                bot.execute(sendMsg(message,moderation));
+                bot.sendQueue.add(sendMsg(message,moderation));
                 status=1;
             }
 
@@ -69,45 +70,47 @@ public class defaultHandler extends HadlerAbstract {
                 status=3;
         }
     }
-    private SendMessage sendMessageTxt(Message message, String text)  {
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setText(text);
-        return sendMessage;
+    private SendMessage sendMessageHelper(Message message) throws TelegramApiException {
+        if(status<3) bot.execute(new DeleteMessage(message.getChatId(), message.getMessageId()));
+        return new SendMessage().setChatId(message.getChatId().toString()).enableMarkdown(true);
     }
 
-    private SendMessage ReferenceURL(Update update)  {
-        SendMessage sendMessage=new SendMessage().setChatId(update.getMessage().getChatId()).setText("Обо мне \uD83E\uDD16 \n Селезнев Сергей Александрович \nРепетитор по информатике/программированию и математике \nЭтот бот позволяет узнать мое расписание занятий\n @temps799");
+    private SendMessage sendMessageTxt(Message message, String text) throws TelegramApiException {
+        return sendMessageHelper(message).
+                setText(text);
+    }
+
+    private SendMessage ReferenceURL(Update update) throws TelegramApiException {
+        bot.execute(new DeleteMessage(update.getMessage().getChatId(), update.getMessage().getMessageId()));
+
+        SendMessage sendMessage=new SendMessage().setChatId(update.getMessage().getChatId())
+                .setText("Обо мне \uD83E\uDD16 \n Селезнев Сергей Александрович \n" +
+                        "Репетитор по информатике/программированию и математике \n" +
+                        "Этот бот позволяет узнать мое расписание занятий\n @temps799");
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List <List<InlineKeyboardButton>> rowsInline = new ArrayList< >();
         List < InlineKeyboardButton > rowInline = new ArrayList < > ();
 
-        rowInline.add(new InlineKeyboardButton().setText("Ссылка на профиль").setUrl("https://repetit.ru/repetitor.aspx?id=148297"));
+        rowInline.add(new InlineKeyboardButton().setText("Ссылка на профиль")
+                .setUrl("https://repetit.ru/repetitor.aspx?id=148297"));
         rowsInline.add(rowInline);
         markupInline.setKeyboard(rowsInline);
         sendMessage.setReplyMarkup(markupInline);
         return sendMessage;
     }
 
-    private SendMessage sendMsg (Message message, String text)  {
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.enableMarkdown(true);
-        sendMessage.setReplyMarkup(showReplyKeyboardMarkup(getKeyboard("Календарь \uD83D\uDCC5","\n","Обо мне \uD83E\uDD16")));
-        sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setText(text);
-        return sendMessage;
+   private SendMessage sendMsg (Message message, String text) throws TelegramApiException {
+        return sendMessageHelper(message).
+                setText(text).
+                setReplyMarkup(showReplyKeyboardMarkup(getKeyboard("Календарь \uD83D\uDCC5","\n", "Обо мне \uD83E\uDD16")));
 
     }
 
+
     private SendMessage sendMsgWeeks(Message message, String text) throws TelegramApiException {
-        DeleteMessage deleteMessage = new DeleteMessage(message.getChatId(), message.getMessageId());
-        bot.execute(deleteMessage);
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.enableMarkdown(true);
-        sendMessage.setReplyMarkup(showReplyKeyboardMarkup(getKeyboard(Calendar.getData(),"\n","ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС")));
-        sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setText(text);
-        return sendMessage;
+        return sendMessageHelper(message).
+                setText(text).
+                setReplyMarkup(showReplyKeyboardMarkup(getKeyboard(Calendar.getData(),"\n","ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС")));
 
     }
 

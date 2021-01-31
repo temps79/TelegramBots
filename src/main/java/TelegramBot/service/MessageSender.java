@@ -2,7 +2,9 @@ package TelegramBot.service;
 
 
 import TelegramBot.model.Bot;
+import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 
@@ -25,24 +27,29 @@ public class MessageSender implements Runnable{
                 try {
                     sendInfo(stringBuilder.toString());
                 } catch (TelegramApiException e) {
-                    e.printStackTrace();
+
                 }
             }
             for(Object object= bot.sendQueue.poll();object!=null;object=bot.sendQueue.poll()){
-                send(object);
+                try {
+                    send(object);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+
             }
+
         }
     }
-    private void send(Object object){
-
-
+    private void send(Object object) throws TelegramApiException {
+        BotApiMethod<Message> message = (BotApiMethod<Message>) object;
+        bot.execute(message);
     }
     private   void  sendInfo(String text) throws TelegramApiException {
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId("491099045");
-        sendMessage.setText(text);
         System.out.println(text);
-        bot.sendMessage(sendMessage);
+        bot.sendMessage(new SendMessage()
+                .setChatId("491099045")
+                .setText(text));
     }
 
 
