@@ -2,6 +2,7 @@ package TelegramBot.handler;
 
 import TelegramBot.ability.Weeks;
 import TelegramBot.model.Bot;
+import TelegramBot.service.MessageSender;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.api.objects.Message;
@@ -22,10 +23,10 @@ import static TelegramBot.handler.Action.getKeyboard;
 import static TelegramBot.handler.Action.showReplyKeyboardMarkup;
 
 
-public class defaultHandler extends HadlerAbstract {
+public class DefaultHandler extends HadlerAbstract {
     private static int status=0;
 
-    public defaultHandler(Bot bot){ super(bot); }
+    public DefaultHandler(Bot bot){ super(bot); }
 
     @Override
     public void operator(Update update) throws TelegramApiException, GeneralSecurityException, IOException {
@@ -43,7 +44,8 @@ public class defaultHandler extends HadlerAbstract {
                 status = 1;
             } else if (Weeks.contains(message.getText()) && status == 2) {
                 bot.sendQueue.add(sendMsgWeeks(message,Calendar.printTable(Calendar.getEvents(message.getText()))));
-                bot.sendSystemQueue.add(Calendar.getMoney(Calendar.getEvents(message.getText())));
+                if(update.getMessage().getChatId().equals(MessageSender.getAdminChatId()))
+                    bot.sendSystemQueue.add(Calendar.getMoney(Calendar.getEvents(message.getText())));
                 bot.sendQueue.add(sendInlineKeyBoardMessage(message.getChatId()));
                 status = 2;
             } else if (message.hasText() && status == 2) {

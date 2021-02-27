@@ -12,7 +12,12 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 public class MessageSender implements Runnable{
     private Bot bot;
     private String AnnaChatId="467295343";
-    private String AdminChatId="491099045";
+
+    public static String getAdminChatId() {
+        return AdminChatId;
+    }
+
+    private static String AdminChatId="491099045";
 
 
     public MessageSender(Bot bot) {
@@ -54,14 +59,14 @@ public class MessageSender implements Runnable{
                 .setText(text));
 
     }
-    private void sendMoneyInfo(String text) throws TelegramApiException {
+   /** private void sendMoneyInfo(String text) throws TelegramApiException {
         bot.sendMessage(new SendMessage()
                 .setChatId(AdminChatId)
                 .setText(text));
         bot.sendMessage(new SendMessage()
                 .setChatId(AnnaChatId)
                 .setText(text));
-    }
+    }*/
 
 
 
