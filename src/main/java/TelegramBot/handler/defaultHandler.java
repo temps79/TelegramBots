@@ -30,6 +30,7 @@ public class defaultHandler extends HadlerAbstract {
     @Override
     public void operator(Update update) throws TelegramApiException, GeneralSecurityException, IOException {
         Message message=update.getMessage();
+        System.out.println(update.getMessage().getChatId());
         if(update.hasMessage()) {
             if ((message.hasText() && status == 0) || (message.getText().equals("/start"))) {
                 bot.sendQueue.add(sendMsg(message,entryAction));
@@ -41,7 +42,8 @@ public class defaultHandler extends HadlerAbstract {
                 bot.sendQueue.add(ReferenceURL(update));
                 status = 1;
             } else if (Weeks.contains(message.getText()) && status == 2) {
-                bot.sendQueue.add(sendMsgWeeks(message,Calendar.printTable(message.getText())));
+                bot.sendQueue.add(sendMsgWeeks(message,Calendar.printTable(Calendar.getEvents(message.getText()))));
+                bot.sendSystemQueue.add(Calendar.getMoney(Calendar.getEvents(message.getText())));
                 bot.sendQueue.add(sendInlineKeyBoardMessage(message.getChatId()));
                 status = 2;
             } else if (message.hasText() && status == 2) {

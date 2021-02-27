@@ -11,6 +11,8 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 public class MessageSender implements Runnable{
     private Bot bot;
+    private String AnnaChatId="467295343";
+    private String AdminChatId="491099045";
 
 
     public MessageSender(Bot bot) {
@@ -20,7 +22,7 @@ public class MessageSender implements Runnable{
     @Override
     public void run() {
         while(true){
-            if(bot.sendSystemQueue.size()>=4) {
+            if(bot.sendSystemQueue.size()>=1) {
                 StringBuilder stringBuilder=new StringBuilder();
                 for (String string = bot.sendSystemQueue.poll(); string != null; string = bot.sendSystemQueue.poll())
                     stringBuilder.append(string);
@@ -48,7 +50,16 @@ public class MessageSender implements Runnable{
     private   void  sendInfo(String text) throws TelegramApiException {
         System.out.println(text);
         bot.sendMessage(new SendMessage()
-                .setChatId("491099045")
+                .setChatId(AdminChatId)
+                .setText(text));
+
+    }
+    private void sendMoneyInfo(String text) throws TelegramApiException {
+        bot.sendMessage(new SendMessage()
+                .setChatId(AdminChatId)
+                .setText(text));
+        bot.sendMessage(new SendMessage()
+                .setChatId(AnnaChatId)
                 .setText(text));
     }
 

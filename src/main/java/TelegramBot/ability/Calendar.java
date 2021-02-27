@@ -12,6 +12,7 @@ import com.google.api.client.util.DateTime;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
 
 import java.io.FileNotFoundException;
@@ -43,9 +44,8 @@ public class Calendar{
     //Формат даты
     private static final SimpleDateFormat simpleDateFormat=new SimpleDateFormat("EEEE d MMMM yyyy ",new Locale("ru"));
     public static String  getData(){
-
         simpleDateFormat.setTimeZone(tz);
-        System.out.println(nowDate);
+
         return simpleDateFormat.format(nowDate);
     }
 
@@ -74,10 +74,12 @@ public class Calendar{
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    // Печать расписания
-    public static String printTable(String day) throws GeneralSecurityException, IOException {
+    public static List<Event> getEvents(String day) throws GeneralSecurityException, IOException {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        com.google.api.services.calendar.Calendar service = new com.google.api.services.calendar.Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+        com.google.api.services.calendar.Calendar service = new com.google
+                .api.services
+                .calendar.Calendar
+                .Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));
@@ -93,29 +95,54 @@ public class Calendar{
                 .setSingleEvents(true)
                 .execute();
         List<Event> items = events.getItems();
-        //результирующая строка
-        String result=new String();
-        //Определения дня в зависисмсоти от недели
+        List<Event> result=new ArrayList<>();
         int statusDay=Weeks.getDayOfWeeks(day);
-        result="_"+simpleDateFormat.format(getPrivateCalendar(statusDay).getTime())+"_"+"\n\n";
-        //Определение событий подоходящих под выбранный день
+
         if (!items.isEmpty())  {
             for (Event event : items) {
                 DateTime start = event.getStart().getDateTime();
                 Date date=new Date(start.getValue());
                 if(date.getDay()==statusDay) {
-                    String localText="";
-                    if(event.getLocation()!=null)
-                        localText="`";
-                    if (date.getMinutes() < 10)
-                        result += "* Имя:*"  + localText+event.getSummary()+localText + "\t *Время:*" + date.getHours() + ":0" + date.getMinutes() + "\n\n";
-                    else
-                        result += "* Имя:*" + localText+event.getSummary()+localText + "\t *Время:*" + date.getHours() + ":" + date.getMinutes() + "\n\n";
+                    result.add(event);
                 }
             }
         }
-        if(!result.contains("* Имя:*")){
-            result +="*Выходной*";
+        if(result.isEmpty())
+            result.add(new Event().setStart(new EventDateTime().setDateTime(new DateTime(getPrivateCalendar(statusDay).getTime()))));
+
+        return result;
+
+    }
+
+    public static String getMoney(List<Event> list){
+        int count=0;
+        if(list.get(0).getSummary()!=null){
+            for (Event event : list) {
+                count+=Integer.parseInt(event.getDescription());
+            }
+        }
+        return String.valueOf(count);
+    }
+    // Печать расписания
+    public static String printTable(List<Event> list) throws GeneralSecurityException, IOException {
+        //результирующая строка
+        String result="_"+simpleDateFormat.format(list.get(0).getStart().getDateTime().getValue())+"_"+"\n\n";
+        //Определения дня в зависисмсоти от недели
+        if(list.get(0).getSummary()==null)
+            result += "*Выходной*";
+        else {
+            //Определение событий подоходящих под выбранный день
+            for (Event event : list) {
+                DateTime start = event.getStart().getDateTime();
+                Date date = new Date(start.getValue());
+                String localText = "";
+                if (event.getLocation() != null)
+                    localText = "`";
+                if (date.getMinutes() < 10)
+                    result += "* Имя:*" + localText + event.getSummary() + localText + "\t *Время:*" + date.getHours() + ":0" + date.getMinutes() + "\n\n";
+                else
+                    result += "* Имя:*" + localText + event.getSummary() + localText + "\t *Время:*" + date.getHours() + ":" + date.getMinutes() + "\n\n";
+            }
         }
         return result;
     }
