@@ -44,7 +44,7 @@ public class DefaultHandler extends HadlerAbstract {
                 status = 1;
             } else if (Weeks.contains(message.getText()) && status == 2) {
                 bot.sendQueue.add(sendMsgWeeks(message,Calendar.printTable(Calendar.getEvents(message.getText()))));
-                if(update.getMessage().getChatId().equals(MessageSender.getAdminChatId()))
+                if(update.getMessage().getChatId().toString().equals(MessageSender.getAdminChatId()))
                     bot.sendSystemQueue.add(Calendar.getMoney(Calendar.getEvents(message.getText())));
                 bot.sendQueue.add(sendInlineKeyBoardMessage(message.getChatId()));
                 status = 2;

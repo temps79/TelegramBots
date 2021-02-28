@@ -109,7 +109,6 @@ public class Calendar{
         }
         if(result.isEmpty())
             result.add(new Event().setStart(new EventDateTime().setDateTime(new DateTime(getPrivateCalendar(statusDay).getTime()))));
-
         return result;
 
     }
@@ -120,8 +119,9 @@ public class Calendar{
             for (Event event : list) {
                 count+=Integer.parseInt(event.getDescription());
             }
+            return String.valueOf(count);
         }
-        return String.valueOf(count);
+        return ""; 
     }
     // Печать расписания
     public static String printTable(List<Event> list) throws GeneralSecurityException, IOException {
