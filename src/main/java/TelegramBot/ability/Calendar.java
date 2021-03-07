@@ -117,15 +117,20 @@ public class Calendar{
         int count=0;
         if(list.get(0).getSummary()!=null){
             for (Event event : list) {
-                count+=Integer.parseInt(event.getDescription());
+                try {
+                    count += Integer.parseInt(event.getDescription());
+                }catch (Exception e){
+                    System.out.println("Error on class:Calendar;method getMoney");
+                }
             }
             return String.valueOf(count);
         }
-        return ""; 
+        return "";
     }
     // Печать расписания
     public static String printTable(List<Event> list) throws GeneralSecurityException, IOException {
         //результирующая строка
+
         String result="_"+simpleDateFormat.format(list.get(0).getStart().getDateTime().getValue())+"_"+"\n\n";
         //Определения дня в зависисмсоти от недели
         if(list.get(0).getSummary()==null)

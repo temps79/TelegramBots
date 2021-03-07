@@ -31,7 +31,7 @@ public class DefaultHandler extends HadlerAbstract {
     @Override
     public void operator(Update update) throws TelegramApiException, GeneralSecurityException, IOException {
         Message message=update.getMessage();
-        System.out.println(update.getMessage().getChatId());
+        System.out.println(update.getMessage().getChatId()+"\n"+Calendar.getData());
         if(update.hasMessage()) {
             if ((message.hasText() && status == 0) || (message.getText().equals("/start"))) {
                 bot.sendQueue.add(sendMsg(message,entryAction));
