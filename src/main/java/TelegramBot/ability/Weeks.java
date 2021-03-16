@@ -20,19 +20,17 @@ public enum Weeks {
     }
 
     public static boolean contains(String title){
-        for(Weeks weeks:Weeks.values()){
+        for(Weeks weeks:Weeks.values())
             if(weeks.title.equals(title))
                 return true;
-        }
         return false;
     }
 
     public static int getDayOfWeeks(String title){
         if(contains(title))
-            for (Weeks weeks : Weeks.values()) {
+            for (Weeks weeks : Weeks.values())
                 if (weeks.title.equals(title))
                     return weeks.ordinal();
-            }
         return 0;
 
     }

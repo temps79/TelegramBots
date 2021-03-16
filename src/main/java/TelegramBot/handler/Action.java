@@ -25,16 +25,14 @@ public class Action {
         // Создаем список строк клавиатуры
         List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow keyboardRow=new KeyboardRow();
-        for(int i=0;i<params.length;i++){
+        for(int i=0;i<params.length;i++)
             // Добавляем все строчки клавиатуры в список
             if(params[i].equals("\n")) {
                 keyboard.add(keyboardRow);
                 keyboardRow = new KeyboardRow();
             }
-            else {
+            else
                 keyboardRow.add(params[i]);
-            }
-        }
         keyboard.add(keyboardRow);
         return keyboard;
     }

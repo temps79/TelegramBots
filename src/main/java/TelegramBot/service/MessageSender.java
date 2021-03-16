@@ -1,6 +1,7 @@
 package TelegramBot.service;
 
 
+import TelegramBot.handler.DefaultHandler;
 import TelegramBot.model.Bot;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -11,10 +12,17 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 public class MessageSender implements Runnable{
     private Bot bot;
-    private String AnnaChatId="467295343";
+
+
+
+    private static String AnnaChatId="467295343";
 
     public static String getAdminChatId() {
         return AdminChatId;
+    }
+
+    public static String getAnnaChatId() {
+        return AnnaChatId;
     }
 
     private static String AdminChatId="491099045";
@@ -27,7 +35,15 @@ public class MessageSender implements Runnable{
     @Override
     public void run() {
         while(true){
-            if(bot.sendSystemQueue.size()>=1) {
+            if(bot.sendSystemQueue.size()==1&& DefaultHandler.isReady()) {
+                String[] sysArray=bot.sendSystemQueue.poll().split(":");
+                try {
+                    sendMoneyInfo(sysArray[0],sysArray[1]);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(bot.sendSystemQueue.size()==4){
                 StringBuilder stringBuilder=new StringBuilder();
                 for (String string = bot.sendSystemQueue.poll(); string != null; string = bot.sendSystemQueue.poll())
                     stringBuilder.append(string);
@@ -37,15 +53,12 @@ public class MessageSender implements Runnable{
 
                 }
             }
-            for(Object object= bot.sendQueue.poll();object!=null;object=bot.sendQueue.poll()){
+            for(Object object= bot.sendQueue.poll();object!=null;object=bot.sendQueue.poll())
                 try {
                     send(object);
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
-
-            }
-
         }
     }
     private void send(Object object) throws TelegramApiException {
@@ -59,14 +72,11 @@ public class MessageSender implements Runnable{
                 .setText(text));
 
     }
-   /** private void sendMoneyInfo(String text) throws TelegramApiException {
+   private void sendMoneyInfo(String text,String ChatId) throws TelegramApiException {
         bot.sendMessage(new SendMessage()
-                .setChatId(AdminChatId)
+                .setChatId(ChatId)
                 .setText(text));
-        bot.sendMessage(new SendMessage()
-                .setChatId(AnnaChatId)
-                .setText(text));
-    }*/
+    }
 
 
 

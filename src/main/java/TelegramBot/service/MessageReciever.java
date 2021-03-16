@@ -23,20 +23,16 @@ public class MessageReciever implements Runnable{
 
     @Override
     public void run() {
-        while(true){
-            for(Object object= bot.receiveQueue.poll();object!=null;object=bot.receiveQueue.poll()){
+        while(true)
+            for(Object object= bot.receiveQueue.poll();object!=null;object=bot.receiveQueue.poll())
                 try {
                     checkUpdate(object);
                 } catch (TelegramApiException | GeneralSecurityException | IOException  e) {
                     e.printStackTrace();
                 }
-            }
-        }
     }
     private void checkUpdate(Object object) throws TelegramApiException, GeneralSecurityException, IOException  {
-        if(object instanceof Update){
+        if(object instanceof Update)
             new DefaultHandler(bot).operator((Update) object);
-        }
-
     }
 }

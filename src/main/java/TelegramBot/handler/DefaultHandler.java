@@ -26,14 +26,23 @@ import static TelegramBot.handler.Action.showReplyKeyboardMarkup;
 public class DefaultHandler extends HadlerAbstract {
     private static int status=0;
 
+
+
+    private static boolean ready;
+
+    public static boolean isReady() {
+        return ready;
+    }
+
     public DefaultHandler(Bot bot){ super(bot); }
 
     @Override
     public void operator(Update update) throws TelegramApiException, GeneralSecurityException, IOException {
+        ready=false;
         Message message=update.getMessage();
-        System.out.println(update.getMessage().getChatId()+"\n"+Calendar.getData());
-        if(update.hasMessage()) {
-            if ((message.hasText() && status == 0) || (message.getText().equals("/start"))) {
+        if(update.hasMessage()&&message.hasText()) {
+            //System.out.println(update.getMessage().getChatId()+"\n"+Calendar.getData());
+            if (status == 0 || message.getText().equals("/start")) {
                 bot.sendQueue.add(sendMsg(message,entryAction));
                 status = 1;
             } else if (message.getText().equals(calendar) && status == 1) {
@@ -44,14 +53,17 @@ public class DefaultHandler extends HadlerAbstract {
                 status = 1;
             } else if (Weeks.contains(message.getText()) && status == 2) {
                 bot.sendQueue.add(sendMsgWeeks(message,Calendar.printTable(Calendar.getEvents(message.getText()))));
-                if(update.getMessage().getChatId().toString().equals(MessageSender.getAdminChatId()))
-                    bot.sendSystemQueue.add(Calendar.getMoney(Calendar.getEvents(message.getText())));
+                if(update.getMessage().getChatId().toString().equals(MessageSender.getAdminChatId())||
+                        update.getMessage().getChatId().toString().equals(MessageSender.getAnnaChatId())) {
+                    bot.sendSystemQueue.add(Calendar.getMoney(Calendar.getEvents(message.getText()))+":"+message.getChatId().toString());
+                    ready=true;
+                }
                 bot.sendQueue.add(sendInlineKeyBoardMessage(message.getChatId()));
                 status = 2;
-            } else if (message.hasText() && status == 2) {
+            } else if (status == 2) {
                 bot.sendQueue.add(sendMsgWeeks(message,today));
                 status = 2;
-            }else if(message.hasText()&&status==3){
+            }else if(status==3){
                 bot.sendSystemQueue.add(String.format("TelegramName: %s | %s\nИмя:", message.getChat().getFirstName(),
                         message.getChat().getLastName()==null?"":message.getChat().getLastName()));
                 bot.sendSystemQueue.add(message.getText()+"\nВремя:");
