@@ -45,7 +45,7 @@ public class Calendar{
     private static final SimpleDateFormat simpleDateFormat=new SimpleDateFormat("EEEE d MMMM yyyy ",new Locale("ru"));
     public static String  getData(){
         simpleDateFormat.setTimeZone(tz);
-
+        nowDate=new Date();
         return simpleDateFormat.format(nowDate);
     }
 
