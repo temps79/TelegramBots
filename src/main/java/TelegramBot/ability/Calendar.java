@@ -75,6 +75,8 @@ public class Calendar{
     }
 
     public static List<Event> getEvents(String day) throws GeneralSecurityException, IOException {
+
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         com.google.api.services.calendar.Calendar service = new com.google
                 .api.services
@@ -82,7 +84,7 @@ public class Calendar{
                 .Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
-        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));
+
         // Вычисление начала текущего дня
         DateTime now = new DateTime(System.currentTimeMillis()-timeInDay);
         // Вычисление недели до текущего дня(не включая)
