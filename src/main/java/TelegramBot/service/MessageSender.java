@@ -1,31 +1,47 @@
 package TelegramBot.service;
 
 
+import TelegramBot.States.State;
 import TelegramBot.handler.DefaultHandler;
 import TelegramBot.model.Bot;
+import lombok.Getter;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
+import java.util.Map;
+import java.util.Set;
 
 
 public class MessageSender implements Runnable{
     private Bot bot;
 
+    @Getter
+    private static Bot.User AdminChatId=new Bot.User("491099045");
+    @Getter
+    private static Bot.User AnnaChatId=new Bot.User("467295343");
 
+    public static void setTrue(String id,Bot bot){
+        String chatId="";
+        if(id.equals(AdminChatId.getChatId()))
+            AdminChatId.setReady(true);
+        else if(id.equals(getAnnaChatId()))
+            AnnaChatId.setReady(true);
+        else return;
 
-    private static String AnnaChatId="467295343";
+    }
+    public static void setFalse(String id,Bot bot){
+        String chatId="";
+        if(id.equals(AdminChatId.getChatId()))
+            AdminChatId.setReady(false);
+        else if(id.equals(getAnnaChatId()))
+            AnnaChatId.setReady(false);
+        else return;
 
-    public static String getAdminChatId() {
-        return AdminChatId;
     }
 
-    public static String getAnnaChatId() {
-        return AnnaChatId;
-    }
 
-    private static String AdminChatId="491099045";
 
 
     public MessageSender(Bot bot) {
@@ -35,14 +51,15 @@ public class MessageSender implements Runnable{
     @Override
     public void run() {
         while(true){
-            if(bot.sendSystemQueue.size()==1&& DefaultHandler.isReady()) {
-                String[] sysArray=bot.sendSystemQueue.poll().split(":");
+            if (bot.sendSystemQueue.size() == 1 && (AdminChatId.isReady() || AnnaChatId.isReady())) {
+                String[] sysArray = bot.sendSystemQueue.poll().split(":");
                 try {
-                    sendMoneyInfo(sysArray[0],sysArray[1]);
+                    sendMoneyInfo(sysArray[0], sysArray[1]);
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
             }
+
             if(bot.sendSystemQueue.size()==4){
                 StringBuilder stringBuilder=new StringBuilder();
                 for (String string = bot.sendSystemQueue.poll(); string != null; string = bot.sendSystemQueue.poll())
@@ -53,6 +70,7 @@ public class MessageSender implements Runnable{
 
                 }
             }
+
             for(Object object= bot.sendQueue.poll();object!=null;object=bot.sendQueue.poll())
                 try {
                     send(object);
@@ -68,7 +86,7 @@ public class MessageSender implements Runnable{
     private   void  sendInfo(String text) throws TelegramApiException {
         System.out.println(text);
         bot.sendMessage(new SendMessage()
-                .setChatId(AdminChatId)
+                .setChatId(AdminChatId.getChatId())
                 .setText(text));
 
     }

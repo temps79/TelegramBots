@@ -1,12 +1,16 @@
 package TelegramBot.model;
 
+import TelegramBot.States.State;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
-import java.text.SimpleDateFormat;
+
+import java.util.HashMap;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -14,6 +18,25 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 public class Bot extends TelegramLongPollingBot {
+    @Setter
+    @Getter
+    private HashMap<String,State> stateMap;
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class User{
+        public User(String chatId) {
+            this.chatId = chatId;
+        }
+        @Getter
+        @Setter
+        private String chatId;
+        @Setter
+        @Getter
+        private boolean ready;
+
+    }
+
 
     @Setter
     @Getter
@@ -26,12 +49,13 @@ public class Bot extends TelegramLongPollingBot {
     public final Queue<String> sendSystemQueue = new ConcurrentLinkedQueue<>();
     public final Queue<Object> receiveQueue = new ConcurrentLinkedQueue<>();
 
-    private int status=0;// Стату сообщения
 
     public Bot(String botName, String token) {
+        stateMap =new HashMap<>();
         this.botName=botName;
         this.token=token;
     }
+
 
     @Override
     public String getBotUsername() {

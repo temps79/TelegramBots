@@ -32,6 +32,7 @@ public class MessageReciever implements Runnable{
                 }
     }
     private void checkUpdate(Object object) throws TelegramApiException, GeneralSecurityException, IOException  {
+
         if(object instanceof Update)
             new DefaultHandler(bot).operator((Update) object);
     }
