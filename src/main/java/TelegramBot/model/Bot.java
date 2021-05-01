@@ -22,20 +22,7 @@ public class Bot extends TelegramLongPollingBot {
     @Getter
     private HashMap<String,State> stateMap;
 
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class User{
-        public User(String chatId) {
-            this.chatId = chatId;
-        }
-        @Getter
-        @Setter
-        private String chatId;
-        @Setter
-        @Getter
-        private boolean ready;
 
-    }
 
 
     @Setter

@@ -4,7 +4,10 @@ package TelegramBot.service;
 import TelegramBot.States.State;
 import TelegramBot.handler.DefaultHandler;
 import TelegramBot.model.Bot;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
@@ -17,28 +20,41 @@ import java.util.Set;
 public class MessageSender implements Runnable{
     private Bot bot;
 
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class User{
+        public User(String chatId) {
+            this.chatId = chatId;
+        }
+        @Getter
+        @Setter
+        private String chatId;
+        @Setter
+        @Getter
+        private boolean ready;
+
+    }
     @Getter
-    private static Bot.User AdminChatId=new Bot.User("491099045");
+    private static User AdminChatId=new User("491099045");
     @Getter
-    private static Bot.User AnnaChatId=new Bot.User("467295343");
+    private static User AnnaChatId=new User("467295343");
 
     public static void setTrue(String id,Bot bot){
-        String chatId="";
-        if(id.equals(AdminChatId.getChatId()))
+        if(id.equals(AdminChatId.getChatId())) {
             AdminChatId.setReady(true);
+        }
         else if(id.equals(getAnnaChatId()))
             AnnaChatId.setReady(true);
+
         else return;
 
     }
     public static void setFalse(String id,Bot bot){
-        String chatId="";
         if(id.equals(AdminChatId.getChatId()))
             AdminChatId.setReady(false);
         else if(id.equals(getAnnaChatId()))
             AnnaChatId.setReady(false);
         else return;
-
     }
 
 
@@ -84,7 +100,6 @@ public class MessageSender implements Runnable{
         bot.execute(message);
     }
     private   void  sendInfo(String text) throws TelegramApiException {
-        System.out.println(text);
         bot.sendMessage(new SendMessage()
                 .setChatId(AdminChatId.getChatId())
                 .setText(text));

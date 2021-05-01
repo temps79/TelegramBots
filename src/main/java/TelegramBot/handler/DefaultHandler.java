@@ -34,10 +34,7 @@ public class DefaultHandler extends HadlerAbstract {
 
         Message message=update.getMessage();
         String chatId;
-        if(update.hasCallbackQuery())
-            chatId=update.getCallbackQuery().getMessage().getChatId().toString();
-        else
-            chatId=update.getMessage().getChatId().toString();
+        chatId=update.hasCallbackQuery()?update.getCallbackQuery().getMessage().getChatId().toString():update.getMessage().getChatId().toString();
         if(bot.getStateMap().containsKey(chatId) ) {
             if (update.hasMessage() && message.hasText()) {
                 bot.getStateMap().get(message.getChatId().toString()).message(update);

@@ -26,10 +26,10 @@ public class DayState extends State{
         Message message=update.getMessage();
         if (Weeks.contains(message.getText())) {
             bot.sendQueue.add(sendMsgWeeks(message, Calendar.printTable(Calendar.getEvents(message.getText()))));
-            if (update.getMessage().getChatId().toString().equals(MessageSender.getAdminChatId()) ||
-                    update.getMessage().getChatId().toString().equals(MessageSender.getAnnaChatId())) {
-                bot.sendSystemQueue.add(Calendar.getMoney(Calendar.getEvents(message.getText())) + ":" + message.getChatId().toString());
+            if (update.getMessage().getChatId().toString().equals(MessageSender.getAdminChatId().getChatId()) ||
+                    update.getMessage().getChatId().toString().equals(MessageSender.getAnnaChatId().getChatId())) {
                 MessageSender.setTrue(message.getChatId().toString(),bot);
+                bot.sendSystemQueue.add(Calendar.getMoney(Calendar.getEvents(message.getText())) + ":" + message.getChatId().toString());
             }
             bot.sendQueue.add(sendInlineKeyBoardMessage(message.getChatId()));
         }
