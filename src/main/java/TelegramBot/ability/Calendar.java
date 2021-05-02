@@ -75,7 +75,6 @@ public class Calendar{
     }
 
     public static List<Event> getEvents(String day) throws GeneralSecurityException, IOException {
-
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         com.google.api.services.calendar.Calendar service = new com.google
@@ -129,10 +128,10 @@ public class Calendar{
         }
         return "";
     }
+
     // Печать расписания
     public static String printTable(List<Event> list) throws GeneralSecurityException, IOException {
         //результирующая строка
-
         String result="_"+simpleDateFormat.format(list.get(0).getStart().getDateTime().getValue())+"_"+"\n\n";
         //Определения дня в зависисмсоти от недели
         if(list.get(0).getSummary()==null)

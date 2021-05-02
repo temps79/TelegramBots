@@ -32,27 +32,27 @@ public class MessageSender implements Runnable{
         @Setter
         @Getter
         private boolean ready;
-
     }
+    @Getter
+    @Setter
+    private static String price="";
     @Getter
     private static User AdminChatId=new User("491099045");
     @Getter
     private static User AnnaChatId=new User("467295343");
 
-    public static void setTrue(String id,Bot bot){
-        if(id.equals(AdminChatId.getChatId())) {
+    public static void setTrue(String id){
+        if(id.equals(AdminChatId.getChatId()))
             AdminChatId.setReady(true);
-        }
-        else if(id.equals(getAnnaChatId()))
+        else if(id.equals(AnnaChatId.getChatId()))
             AnnaChatId.setReady(true);
-
         else return;
-
     }
-    public static void setFalse(String id,Bot bot){
+
+    public static void setFalse(String id){
         if(id.equals(AdminChatId.getChatId()))
             AdminChatId.setReady(false);
-        else if(id.equals(getAnnaChatId()))
+        else if(id.equals(AnnaChatId.getChatId()))
             AnnaChatId.setReady(false);
         else return;
     }
@@ -64,18 +64,19 @@ public class MessageSender implements Runnable{
         this.bot = bot;
     }
 
+
     @Override
     public void run() {
         while(true){
-            if (bot.sendSystemQueue.size() == 1 && (AdminChatId.isReady() || AnnaChatId.isReady())) {
-                String[] sysArray = bot.sendSystemQueue.poll().split(":");
+            if (price.matches("\\d+:\\d+") && (AdminChatId.isReady() || AnnaChatId.isReady())) {
+                String[] sysArray = price.split(":");
                 try {
                     sendMoneyInfo(sysArray[0], sysArray[1]);
+                    price="";
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
             }
-
             if(bot.sendSystemQueue.size()==4){
                 StringBuilder stringBuilder=new StringBuilder();
                 for (String string = bot.sendSystemQueue.poll(); string != null; string = bot.sendSystemQueue.poll())
@@ -98,6 +99,8 @@ public class MessageSender implements Runnable{
     private void send(Object object) throws TelegramApiException {
         BotApiMethod<Message> message = (BotApiMethod<Message>) object;
         bot.execute(message);
+
+
     }
     private   void  sendInfo(String text) throws TelegramApiException {
         bot.sendMessage(new SendMessage()

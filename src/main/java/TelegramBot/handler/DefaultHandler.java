@@ -27,10 +27,10 @@ public class DefaultHandler extends HadlerAbstract {
     }
 
     @Override
-    public void operator(Update update) throws TelegramApiException, GeneralSecurityException, IOException {
+    public void operator(Update update) throws TelegramApiException{
 
-        MessageSender.setFalse(MessageSender.getAdminChatId().getChatId(),bot);
-        MessageSender.setFalse(MessageSender.getAnnaChatId().getChatId(),bot);
+        MessageSender.setFalse(MessageSender.getAdminChatId().getChatId());
+        MessageSender.setFalse(MessageSender.getAnnaChatId().getChatId());
 
         Message message=update.getMessage();
         String chatId;
@@ -39,8 +39,7 @@ public class DefaultHandler extends HadlerAbstract {
             if (update.hasMessage() && message.hasText()) {
                 bot.getStateMap().get(message.getChatId().toString()).message(update);
             } else if (update.hasCallbackQuery()) {
-                bot.execute(new SendMessage().setText(
-                        "Как вас зовут?")
+                bot.execute(new SendMessage().setText("Как вас зовут?")
                         .setChatId(update.getCallbackQuery().getMessage().getChatId()));
                 bot.getStateMap().put(update.getCallbackQuery().getMessage().getChatId().toString(),new QuestionTimeInfoState(bot));
             }

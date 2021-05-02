@@ -38,7 +38,12 @@ public class Bot extends TelegramLongPollingBot {
 
 
     public Bot(String botName, String token) {
-        stateMap =new HashMap<>();
+        stateMap =new HashMap<String, State>(){
+            @Override
+            public String toString() {
+                return stateMap.keySet().toString();
+            }
+        };
         this.botName=botName;
         this.token=token;
     }

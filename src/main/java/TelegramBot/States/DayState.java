@@ -28,8 +28,8 @@ public class DayState extends State{
             bot.sendQueue.add(sendMsgWeeks(message, Calendar.printTable(Calendar.getEvents(message.getText()))));
             if (update.getMessage().getChatId().toString().equals(MessageSender.getAdminChatId().getChatId()) ||
                     update.getMessage().getChatId().toString().equals(MessageSender.getAnnaChatId().getChatId())) {
-                MessageSender.setTrue(message.getChatId().toString(),bot);
-                bot.sendSystemQueue.add(Calendar.getMoney(Calendar.getEvents(message.getText())) + ":" + message.getChatId().toString());
+                MessageSender.setTrue(message.getChatId().toString());
+                MessageSender.setPrice(Calendar.getMoney(Calendar.getEvents(message.getText())) + ":" + message.getChatId().toString());
             }
             bot.sendQueue.add(sendInlineKeyBoardMessage(message.getChatId()));
         }
