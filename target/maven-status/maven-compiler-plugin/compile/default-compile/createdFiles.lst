@@ -1,0 +1,9 @@
+TelegramBot\handler\HadlerAbstract.class
+TelegramBot\Application.class
+TelegramBot\handler\DefaultHandler.class
+TelegramBot\service\MessageReciever.class
+TelegramBot\ability\Weeks.class
+TelegramBot\model\Bot.class
+TelegramBot\ability\Calendar.class
+TelegramBot\service\MessageSender.class
+TelegramBot\handler\Action.class
