@@ -1,4 +1,4 @@
-package TelegramBot.States;
+package TelegramBot.states;
 
 import TelegramBot.model.Bot;
 import TelegramBot.service.MessageSender;

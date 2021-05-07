@@ -1,7 +1,7 @@
 package TelegramBot.handler;
 
-import TelegramBot.States.QuestionTimeInfoState;
-import TelegramBot.States.ReadyState;
+import TelegramBot.states.QuestionTimeInfoState;
+import TelegramBot.states.ReadyState;
 import TelegramBot.model.Bot;
 import TelegramBot.service.MessageSender;
 import lombok.Getter;
@@ -10,10 +10,6 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-
-
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 
 
 public class DefaultHandler extends HadlerAbstract {

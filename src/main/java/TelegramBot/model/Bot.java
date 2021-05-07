@@ -1,9 +1,7 @@
 package TelegramBot.model;
 
-import TelegramBot.States.State;
-import lombok.AllArgsConstructor;
+import TelegramBot.states.State;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.objects.Update;

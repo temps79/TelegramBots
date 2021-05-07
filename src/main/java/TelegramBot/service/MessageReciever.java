@@ -2,6 +2,7 @@ package TelegramBot.service;
 
 
 import TelegramBot.handler.DefaultHandler;
+import TelegramBot.handler.HadlerAbstract;
 import TelegramBot.model.Bot;
 import org.telegram.telegrambots.api.objects.Update;
 
@@ -32,8 +33,9 @@ public class MessageReciever implements Runnable{
                 }
     }
     private void checkUpdate(Object object) throws TelegramApiException, GeneralSecurityException, IOException  {
-
-        if(object instanceof Update)
-            new DefaultHandler(bot).operator((Update) object);
+        if(object instanceof Update && object!=null) {
+            HadlerAbstract handler = new DefaultHandler(bot);
+            handler.operator((Update) object);
+        }
     }
 }

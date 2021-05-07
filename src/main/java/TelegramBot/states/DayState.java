@@ -1,8 +1,7 @@
-package TelegramBot.States;
+package TelegramBot.states;
 
 import TelegramBot.ability.Calendar;
 import TelegramBot.ability.Weeks;
-import TelegramBot.handler.DefaultHandler;
 import TelegramBot.model.Bot;
 import TelegramBot.service.MessageSender;
 import lombok.SneakyThrows;

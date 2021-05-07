@@ -1,8 +1,6 @@
 package TelegramBot.service;
 
 
-import TelegramBot.States.State;
-import TelegramBot.handler.DefaultHandler;
 import TelegramBot.model.Bot;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,9 +10,6 @@ import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-
-import java.util.Map;
-import java.util.Set;
 
 
 public class MessageSender implements Runnable{
