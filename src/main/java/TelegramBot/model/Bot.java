@@ -1,5 +1,6 @@
 package TelegramBot.model;
 
+import TelegramBot.hibernate.service.UserService;
 import TelegramBot.states.State;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +30,8 @@ public class Bot extends TelegramLongPollingBot {
     @Setter
     @Getter
     final private String token;
+    @Getter
+    private UserService service;
 
     public final Queue<Object> sendQueue = new ConcurrentLinkedQueue<>();
     public final Queue<String> sendSystemQueue = new ConcurrentLinkedQueue<>();
@@ -42,6 +45,7 @@ public class Bot extends TelegramLongPollingBot {
                 return stateMap.keySet().toString();
             }
         };
+        service=new UserService();
         this.botName=botName;
         this.token=token;
     }

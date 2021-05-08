@@ -4,21 +4,21 @@ package TelegramBot;
 import TelegramBot.model.Bot;
 import TelegramBot.service.MessageReciever;
 import TelegramBot.service.MessageSender;
+import lombok.SneakyThrows;
+import org.apache.commons.io.FileUtils;
 import org.telegram.telegrambots.ApiContextInitializer;
 
+import java.io.File;
+import java.util.Arrays;
 
 
 public class Application {
 
 
-    private static final String BOT_ADMIN = "321644283";
-
     public static void main(String[] args) {
         ApiContextInitializer.init();
-        Bot telegram_bot = new Bot("TimeTablee_bot", "1491572212:AAHy-6x6yfFCkAIalyNtnNjJC9Ue10OCr0c");
-
+        Bot telegram_bot = new Bot(args[0], args[1]);
         telegram_bot.botConnect();
-
 
         MessageReciever messageReciever=new MessageReciever(telegram_bot);
         Thread threadRecievr=new Thread(messageReciever);

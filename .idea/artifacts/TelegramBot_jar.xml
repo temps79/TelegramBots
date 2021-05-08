@@ -1,7 +1,7 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="TelegramBot:jar">
+  <artifact type="war" name="TelegramBot:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/TelegramBot_jar</output-path>
-    <root id="archive" name="TelegramBot.jar">
+    <root id="archive" name="TelegramBot_jar.war">
       <element id="module-output" name="TelegramBot" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/http-client/google-http-client-jackson2/1.23.0/google-http-client-jackson2-1.23.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpmime/4.5.3/httpmime-4.5.3.jar" path-in-jar="/" />

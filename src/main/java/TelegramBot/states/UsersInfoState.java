@@ -15,7 +15,8 @@ public class UsersInfoState extends State{
     @Override
     public void message(Update update) {
         Message message= update.getMessage();
-        bot.sendQueue.add(sendMsgWeeks(message,bot.getStateMap().toString()));
+       // bot.sendQueue.add(sendMsgWeeks(message,bot.getStateMap().toString()));
+        bot.sendQueue.add(sendMsgWeeks(message,bot.getService().findAllUsers().toString()));
         bot.getStateMap().put(message.getChatId().toString(),new ReadyState(bot));
     }
 }

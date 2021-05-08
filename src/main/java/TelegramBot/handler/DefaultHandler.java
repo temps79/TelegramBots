@@ -1,5 +1,6 @@
 package TelegramBot.handler;
 
+import TelegramBot.hibernate.model.User;
 import TelegramBot.states.QuestionTimeInfoState;
 import TelegramBot.states.ReadyState;
 import TelegramBot.model.Bot;
@@ -28,6 +29,7 @@ public class DefaultHandler extends HadlerAbstract {
         MessageSender.setFalse(MessageSender.getAdminChatId().getChatId());
         MessageSender.setFalse(MessageSender.getAnnaChatId().getChatId());
 
+
         Message message=update.getMessage();
         String chatId;
         chatId=update.hasCallbackQuery()?update.getCallbackQuery().getMessage().getChatId().toString():update.getMessage().getChatId().toString();
@@ -43,6 +45,12 @@ public class DefaultHandler extends HadlerAbstract {
         else {
             bot.getStateMap().put(message.getChatId().toString(),new ReadyState(bot));
             bot.receiveQueue.add(update);
+            try {
+                bot.getService().saveUser(new User(chatId, update.getMessage().getChat().getUserName()));
+            }catch (Exception e){
+                System.out.println(e);
+            }
+
         }
     }
 
