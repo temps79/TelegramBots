@@ -57,6 +57,38 @@ All types and methods of the Telegram Bot API 5.2 are supported.
       </hibernate-configuration>
 
   </details>
+* Create DataBase:
+   <details>
+      <summary> DataBase:</summary>
+
+      create table users
+      (
+          chatid varchar                                         not null
+              constraint users_pk
+                  primary key,
+          name   varchar                                         not null,
+          state  varchar default 'ReadyState'::character varying not null
+      );
+
+      alter table users
+          owner to postgres;
+
+      create table message
+      (
+          chatid  varchar not null
+              constraint message_pk
+                  primary key
+              constraint message_users_chatid_fk
+                  references users
+                  on update cascade on delete cascade,
+          name    varchar,
+          time    varchar,
+          contact varchar
+      );
+  </details>
+alter table message
+    owner to postgres;
+
 ## License
 
 Copyright (c) 2021 Temps79
